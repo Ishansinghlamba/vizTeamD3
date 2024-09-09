@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+.chart-tooltip {
+    position: absolute;
+    color: #fff;
+    text-align: center;
+    min-width: 3.75rem;
+    min-height: 2rem;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    margin-top: -1.25rem;
+    font: 1rem Roboto, "Helvetica Neue", sans-serif;
+    background: #000;
+    pointer-events: none;
+  }
