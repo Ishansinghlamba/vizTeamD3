@@ -180,12 +180,12 @@ if (!svg_i.empty()) {
   .attr("class", (d:any) => "country_" + d.properties.name.replace(/\s+/g, "_"))
   .attr("d", path)
   .attr("fill",  function(d:any) {
-     let color = d.continent == 'south america' ? 'orange' : 'white'
+     let color = d.continent == 'americas' ? 'orange' : d.continent == 'middle east' ? 'black': d.continent == 'africa' ? 'red' : 'white'
     
     return color
   })
   .attr("stroke", "black")
-  .attr("stroke-width", 0)
+  .attr("stroke-width", '0.5')
   .attr("opacity", 0.8).on("click", (event, d:any) =>{
     // Example: Log the clicked country’s name
   
