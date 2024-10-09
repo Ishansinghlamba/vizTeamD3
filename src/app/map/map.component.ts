@@ -99,6 +99,9 @@ u.enter()
   }
 
   tryexp(data:any,globe_s:boolean){
+    function zoomed(event) {
+      svg.selectAll("path").attr("transform", event.transform); // Apply zoom transformation
+  }
   let svg_i = d3.select("svg");
 
 if (!svg_i.empty()) {
@@ -116,7 +119,7 @@ if (!svg_i.empty()) {
       .rotate([0,-30])
       .translate([width / 2, height / 2]);
     } else{
-      projection =d3.geoMercator()
+      projection =d3.geoNaturalEarth1()
       .scale(250)
       .center([0, 0])
       .rotate([0,-30])
@@ -144,17 +147,7 @@ if (!svg_i.empty()) {
  }
 
 
-    svg.call(d3.drag().on('drag', (event) => {
-    const rotate = projection.rotate()
-    const k = sensitivity / projection.scale()
-    projection.rotate([
-      rotate[0] + event.dx * k,
-      rotate[1] - event.dy * k
-    ])
-    path = d3.geoPath().projection(projection)
-    svg.selectAll("path").attr("d", path)
-  }))
-    .call(d3.zoom().on('zoom', (event) => {
+    svg.call(d3.zoom().on('zoom', (event) => {
       if(event.transform.k > 0.3) {
         projection.scale(initialScale * event.transform.k)
         path = d3.geoPath().projection(projection)
@@ -185,25 +178,33 @@ if (!svg_i.empty()) {
     return color
   })
   .attr("stroke", "black")
-  .attr("stroke-width", '0')
+  .attr("stroke-width", '0.5')
   .attr("opacity", 0.8).on("click", (event, d:any) =>{
-    // Example: Log the clicked country’s name
-  
-    this.myworlddata2 = data.map(obj => {
-      if (obj.id === d.id) {
-        return { ...obj, clicked: obj.clicked ? false : true };
-      } else {
-        return obj;
-      }
-    });
-
-    this.tryexp(this.myworlddata2,this.checked);
+    console.log('jjjj',d)
+    const zoom = d3.zoom()
+                .scaleExtent([1, 8]) // Allowable zoom levels
+                .on("zoom", zoomed);
+    const [[x0, y0], [x1, y1]] = path.bounds(d);
+    const dx = x1 - x0,
+    dy = y1 - y0,
+    x = (x0 + x1) / 2,
+    y = (y0 + y1) / 2,
+    scale = Math.max(1, Math.min(8, 0.9 / Math.max(dx / width, dy / height))),
+    translate = [width / 2 - scale * x, height / 2 - scale * y];
+    svg.transition()
+                    .duration(750)
+                    .call(
+                        zoom.transform,
+                        d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale)
+                    );
+    
     const dialogRef = this.dialog.open(ModalMapComponent, {
       width: '550px',
       data: { "title":d.properties.name}
     });
 })
   }
+
   getMapWidth(): number {
     // Using D3 to select the element and get its width
     const mapElement = d3.select("#map").node() as HTMLElement;

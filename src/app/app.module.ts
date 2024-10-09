@@ -14,6 +14,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ModalMapComponent } from './modal-map/modal-map.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { Map2DComponent } from './map2-d/map2-d.component';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     ExpChartComponent,
     MapComponent,
     ModalMapComponent,
+    Map2DComponent,
   ],
   imports: [
     BrowserModule,
