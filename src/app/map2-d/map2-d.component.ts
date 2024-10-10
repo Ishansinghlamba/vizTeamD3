@@ -22,8 +22,8 @@ export class Map2DComponent implements OnInit {
   makeMap(){
    let data= this.myworlddata2
     //dimensions
-    let width = d3.select("#map").node().getBoundingClientRect().width
-    let height = 700;
+    let width = 1000
+    let height = 450;
   
 
     //projection
@@ -36,8 +36,9 @@ export class Map2DComponent implements OnInit {
     //setting
     let svg = d3.select("#map")
     .append("svg")
-    .attr("width", width)
-    .attr("height", height)
+    .attr("width", '100%')
+    .attr("height", '20%') 
+    .attr('viewBox', `0 0 ${width} ${height}`)
 
     let map = svg.append("g")
 
@@ -51,7 +52,7 @@ export class Map2DComponent implements OnInit {
     .attr("class", (d:any) => "country_" + d.properties.name.replace(" ","_"))
     .attr("d", path)
     .attr("fill",  function(d:any) {
-      let color = d.continent == 'americas' ? 'orange' : d.continent == 'middle east' ? 'black': d.continent == 'africa' ? 'red' : d.continent == 'indo-pacific' ? 'blue': d.continent == 'europe' ? 'green':'white'
+      let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945': d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545': d.continent == 'europe' ? '#710C0C':'white'
      
      return color
    })
