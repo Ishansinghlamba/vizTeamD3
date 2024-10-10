@@ -57,7 +57,7 @@ export class Map2DComponent implements OnInit {
      return color
    })
     .style('stroke', 'black')
-    .style('stroke-width', 0.3)
+    .style('stroke-width', 0)
     .style("opacity",0.8)
 
   }
