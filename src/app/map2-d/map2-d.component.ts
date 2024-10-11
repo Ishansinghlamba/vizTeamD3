@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as d3 from 'd3';
 import  myworlddata from '../Data/world.json';
+import * as topojson from "topojson-client";
 
 
 
@@ -16,11 +17,20 @@ export class Map2DComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    // d3.json('https://raw.githubusercontent.com/neocarto/resources/master/geometries/World/world_countries.topojson')
+    //   .then((data) => {
+    //     this.createMap(data); // Call a method to render the map using D3
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error loading the world.json file:', error);
+    //   });
    this.makeMap()
   }
 
   makeMap(){
+  
    let data= this.myworlddata2
+
     //dimensions
     let width = 1000
     let height = 450;
@@ -61,5 +71,35 @@ export class Map2DComponent implements OnInit {
     .style("opacity",0.8)
 
   }
+
+  // createMap(data:any){
+  //   console.log(data)
+  //   let height = 450;
+  //   let width=1000
+  //    let countries = topojson.feature(data, data.objects.world_countries_data);
+  //    const outerBoundaries = topojson.mesh(data, data.objects.world_countries_data, (a, b) => a !== b);
+  //    let merged = topojson.merge(data, data.objects.world_countries_data.geometries)
+
+  //   let projection = d3.geoNaturalEarth1()
+  //   .scale(155)
+  //   .center([10, 10])
+  //   .rotate([0,0])
+  //   .translate([width / 2, height / 2]);
+  //   let path = d3.geoPath(projection)
+  //   let svg = d3.select("#map")
+  //   .append("svg")
+  //   .attr("width", '100%')
+  //   .attr("height", '100%') 
+  //   .attr('viewBox', `0 0 ${width} ${height}`)
+
+  //   svg
+  //   .append("path")
+  //   .datum(countries)
+  //   .attr("fill", "#ed87c8")
+  //   .attr("stroke", "white")
+  //   .attr("stroke-width", 0.4)
+  //   .attr("d", path);
+    
+  // }
 
 }
