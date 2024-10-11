@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as d3 from 'd3';
-import  myworlddata from '../Data/world.json';
+import myworlddata from '../Data/world.json';
 
 
 
@@ -10,17 +10,17 @@ import  myworlddata from '../Data/world.json';
   styleUrls: ['./map2-d.component.scss']
 })
 export class Map2DComponent implements OnInit {
-  myworlddata2:any = myworlddata.features
+  myworlddata2: any = myworlddata.features
 
 
   constructor() { }
 
   ngOnInit(): void {
-   this.makeMap()
+    this.makeMap()
   }
 
-  makeMap(){
-   let data= this.myworlddata2
+  makeMap() {
+    let data = this.myworlddata2
     //dimensions
     let width = 1000
     let height = 450;
@@ -29,34 +29,43 @@ export class Map2DComponent implements OnInit {
     console.log(continents)
 
     //projection
-    var projection = d3.geoNaturalEarth1()
-    .scale(150)
-    .center([0, 0])
-    .rotate([0,0])
-    .translate([width / 2, height / 2])
+    let projection = d3.geoNaturalEarth1()
+      .scale(155)
+      .center([10, 10])
+      .rotate([0, 0])
+      .translate([width / 2, height / 2])
 
     //setting
     var svg = d3.select("#map")
-    .append("svg")
-    .attr("width", '100%')
-    .attr("height", '20%') 
-    .attr('viewBox', `0 0 ${width} ${height}`)
+      .append("svg")
+      .attr("width", '100%')
+      .attr("height", '20%')
+      .attr('viewBox', `0 0 ${width} ${height}`)
 
     var map = svg.append("g")
 
-   var path = d3.geoPath().projection(projection)
+    var path = d3.geoPath().projection(projection)
+    d3.select('body').append('div').attr('id', 'tooltip').attr('style', 'position: absolute; opacity: 0;');
 
-   
 
-      continents.forEach(([continent, countries]) => {
-      console.log(continent)
-      console.log(countries)
+
+    continents.forEach(([continent, countries]) => {
       // Create a group for each continent
       const continentGroup = svg.append('g')
-        .attr('class', continent);
+        .attr('class', `${continent} vk`)
+        .on('mouseover', function (d) {
+        }).on('mousemove', function (event: any, d: any) {
+          console.log(continent)
+          d3.select('#tooltip').style('opacity', 1).style('left', (event.pageX + 10) + 'px').style('top', (event.pageY + 10) + 'px').text(continent)
+          d3.select(this).style("opacity", 0.8);
 
-        // console.log(continentGroup)
-      // // Adjust the translation based on the continent
+        })
+        .on('mouseout', function () {
+          d3.select('#tooltip').style('opacity', 0)
+          d3.select(this).style("opacity", 1);
+        })
+
+      // Adjust the translation based on the continent
       let translation = [0, 0]; // Default translation
       if (continent === 'africa') {
         translation = [-6, 2];  // Shift down
@@ -77,45 +86,16 @@ export class Map2DComponent implements OnInit {
       continentGroup.selectAll('path')
         .data(countries)
         .enter().append('path')
+        .attr('class', 'continent')
         .attr('d', path)
-        .attr("fill",  function(d:any) {
-          let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945': d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545': d.continent == 'europe' ? '#710C0C':'white';
+        .attr("fill", function (d: any) {
+          let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945' : d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545' : d.continent == 'europe' ? '#710C0C' : 'white';
           return color
         })
         .attr('stroke', 'black')  // Borders for individual countries
-        .attr('stroke-width', 0);
+        .attr('stroke-width', 0)
+
     });
-  
-
-    
-
-  //   map.append("g")
-  //   .attr("class", "countries" )
-  //   .selectAll("path")
-  //   .data(data)
-  //   .enter().append("path")
-  //   .attr("class", (d:any) => "country_" + d.properties.name.replace(" ","_"))
-  //   .attr("d", path)
-  //   .attr("fill",  function(d:any) {
-  //     let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945': d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545': d.continent == 'europe' ? '#710C0C':'white'
-     
-  //    return color
-  //  })
-  //  .attr('stroke', (d:any) => {
-  //   // Return stroke color based on continent
-  //   switch (d.continent) {
-  //       case 'africa': return 'red';
-  //       case 'asia': return 'red';
-  //       case 'europe': return 'blue';
-  //       case 'north america': return 'orange';
-  //       case 'south america': return 'yellow';
-  //       case 'australia': return 'purple';
-  //       case 'antarctica': return 'lightblue';
-  //       default: return 'black'; // Default for undefined
-  //   }})
-  //   .style('stroke-width', 0.3)
-  //   .style("opacity",0.8)
-
   }
 
 }
