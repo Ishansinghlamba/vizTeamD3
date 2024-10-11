@@ -36,30 +36,30 @@ export class Map2DComponent implements OnInit {
     let height = 450;
 
     const continents = d3.groups(data, (d: any) => d.continent);
-    console.log(continents)
 
     //projection
-    var projection = d3.geoNaturalEarth1()
+    let  projection = d3.geoNaturalEarth1()
     .scale(150)
     .center([0, 0])
     .rotate([0,0])
     .translate([width / 2, height / 2])
 
     //setting
-    var svg = d3.select("#map")
+    let svg = d3.select("#map")
     .append("svg")
     .attr("width", '100%')
     .attr("height", '20%') 
     .attr('viewBox', `0 0 ${width} ${height}`)
 
-    var map = svg.append("g")
+    let map = svg.append("g")
 
    var path = d3.geoPath().projection(projection)
 
-   
+   d3.select('body').append('div').attr('id', 'tooltip').attr('style', 'position: absolute; opacity: 0;');
+
 
       continents.forEach(([continent, countries]) => {
-      console.log(continent)
+      console.log('con',continent)
       console.log(countries)
       // Create a group for each continent
       const continentGroup = svg.append('g')
@@ -93,10 +93,17 @@ export class Map2DComponent implements OnInit {
           return color
         })
         .attr('stroke', 'black')  // Borders for individual countries
-        .attr('stroke-width', 0);
+        .attr('stroke-width', 0).on('mouseover', function(d) {
+          d3.select('#tooltip').transition().duration(200).style('opacity', 1).text('hello')
+          }).on('mousemove', function(event:any,d:any) {
+            console.log('ll',d)
+            d3.select('#tooltip').style('opacity', 1).style('left', (event.pageX+10) + 'px').style('top', (event.pageY+10) + 'px').text('hello')
+            }).on('mouseout', function() {
+ d3.select('#tooltip').style('opacity', 0)
+ })
     });
   
-
+ 
     
 
   //   map.append("g")
