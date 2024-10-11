@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as d3 from 'd3';
-import  myworlddata from '../Data/world.json';
-import * as topojson from "topojson-client";
+import myworlddata from '../Data/world.json';
 
 
 
@@ -11,26 +10,17 @@ import * as topojson from "topojson-client";
   styleUrls: ['./map2-d.component.scss']
 })
 export class Map2DComponent implements OnInit {
-  myworlddata2:any = myworlddata.features
+  myworlddata2: any = myworlddata.features
 
 
   constructor() { }
 
   ngOnInit(): void {
-    // d3.json('https://raw.githubusercontent.com/neocarto/resources/master/geometries/World/world_countries.topojson')
-    //   .then((data) => {
-    //     this.createMap(data); // Call a method to render the map using D3
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error loading the world.json file:', error);
-    //   });
-   this.makeMap()
+    this.makeMap()
   }
 
-  makeMap(){
-  
-   let data= this.myworlddata2
-
+  makeMap() {
+    let data = this.myworlddata2
     //dimensions
     let width = 1000
     let height = 450;
@@ -38,35 +28,40 @@ export class Map2DComponent implements OnInit {
     const continents = d3.groups(data, (d: any) => d.continent);
 
     //projection
-    var projection = d3.geoNaturalEarth1()
-    .scale(150)
-    .center([0, 0])
-    .rotate([0,0])
-    .translate([width / 2, height / 2])
+    let projection = d3.geoNaturalEarth1()
+      .scale(155)
+      .center([10, 10])
+      .rotate([0, 0])
+      .translate([width / 2, height / 2])
 
     //setting
-    let svg = d3.select("#map")
-    .append("svg")
-    .attr("width", '100%')
-    .attr("height", '20%') 
-    .attr('viewBox', `0 0 ${width} ${height}`)
+    var svg = d3.select("#map")
+      .append("svg")
+      .attr("width", '100%')
+      .attr("height", '20%')
+      .attr('viewBox', `0 0 ${width} ${height}`)
 
     let map = svg.append("g")
 
-   var path = d3.geoPath().projection(projection)
-
-   d3.select('body').append('div').attr('id', 'tooltip').attr('style', 'position: absolute; opacity: 0;');
-
-
-      continents.forEach(([continent, countries]) => {
-      console.log('con',continent)
-      console.log(countries)
+    var path = d3.geoPath().projection(projection)
+    d3.select('body').append('div').attr('id', 'tooltip').attr('style', 'position: absolute; opacity: 0;');
+    continents.forEach(([continent, countries]) => {
       // Create a group for each continent
       const continentGroup = svg.append('g')
-        .attr('class', continent);
+        .attr('class', `${continent} vk`)
+        .on('mouseover', function (d) {
+        }).on('mousemove', function (event: any, d: any) {
+          console.log(continent)
+          d3.select('#tooltip').style('opacity', 1).style('left', (event.pageX + 10) + 'px').style('top', (event.pageY + 10) + 'px').text(continent)
+          d3.select(this).style("opacity", 0.8);
 
-        // console.log(continentGroup)
-      // // Adjust the translation based on the continent
+        })
+        .on('mouseout', function () {
+          d3.select('#tooltip').style('opacity', 0)
+          d3.select(this).style("opacity", 1);
+        })
+
+      // Adjust the translation based on the continent
       let translation = [0, 0]; // Default translation
       if (continent === 'africa') {
         translation = [-6, 2];  // Shift down
@@ -87,82 +82,17 @@ export class Map2DComponent implements OnInit {
       continentGroup.selectAll('path')
         .data(countries)
         .enter().append('path')
+        .attr('class', 'continent')
         .attr('d', path)
-        .attr("fill",  function(d:any) {
-          let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945': d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545': d.continent == 'europe' ? '#710C0C':'white';
+        .attr("fill", function (d: any) {
+          let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945' : d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545' : d.continent == 'europe' ? '#710C0C' : 'white';
           return color
         })
         .attr('stroke', 'black')  // Borders for individual countries
-        .attr('stroke-width', 0).on('mouseover', function(d) {
-          d3.select('#tooltip').transition().duration(200).style('opacity', 1).text('hello')
-          }).on('mousemove', function(event:any,d:any) {
-            console.log('ll',d)
-            d3.select('#tooltip').style('opacity', 1).style('left', (event.pageX+10) + 'px').style('top', (event.pageY+10) + 'px').text('hello')
-            }).on('mouseout', function() {
- d3.select('#tooltip').style('opacity', 0)
- })
+        .attr('stroke-width', 0)
+
     });
-  
- 
-    
-
-  //   map.append("g")
-  //   .attr("class", "countries" )
-  //   .selectAll("path")
-  //   .data(data)
-  //   .enter().append("path")
-  //   .attr("class", (d:any) => "country_" + d.properties.name.replace(" ","_"))
-  //   .attr("d", path)
-  //   .attr("fill",  function(d:any) {
-  //     let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945': d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545': d.continent == 'europe' ? '#710C0C':'white'
-     
-  //    return color
-  //  })
-  //  .attr('stroke', (d:any) => {
-  //   // Return stroke color based on continent
-  //   switch (d.continent) {
-  //       case 'africa': return 'red';
-  //       case 'asia': return 'red';
-  //       case 'europe': return 'blue';
-  //       case 'north america': return 'orange';
-  //       case 'south america': return 'yellow';
-  //       case 'australia': return 'purple';
-  //       case 'antarctica': return 'lightblue';
-  //       default: return 'black'; // Default for undefined
-  //   }})
-  //   .style('stroke-width', 0.3)
-  //   .style("opacity",0.8)
-
   }
 
-  // createMap(data:any){
-  //   console.log(data)
-  //   let height = 450;
-  //   let width=1000
-  //    let countries = topojson.feature(data, data.objects.world_countries_data);
-  //    const outerBoundaries = topojson.mesh(data, data.objects.world_countries_data, (a, b) => a !== b);
-  //    let merged = topojson.merge(data, data.objects.world_countries_data.geometries)
-
-  //   let projection = d3.geoNaturalEarth1()
-  //   .scale(155)
-  //   .center([10, 10])
-  //   .rotate([0,0])
-  //   .translate([width / 2, height / 2]);
-  //   let path = d3.geoPath(projection)
-  //   let svg = d3.select("#map")
-  //   .append("svg")
-  //   .attr("width", '100%')
-  //   .attr("height", '100%') 
-  //   .attr('viewBox', `0 0 ${width} ${height}`)
-
-  //   svg
-  //   .append("path")
-  //   .datum(countries)
-  //   .attr("fill", "#ed87c8")
-  //   .attr("stroke", "white")
-  //   .attr("stroke-width", 0.4)
-  //   .attr("d", path);
-    
-  // }
 
 }
