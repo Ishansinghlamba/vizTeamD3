@@ -38,7 +38,7 @@ export class Map2DComponent implements OnInit {
     const continents = d3.groups(data, (d: any) => d.continent);
 
     //projection
-    let  projection = d3.geoNaturalEarth1()
+    var projection = d3.geoNaturalEarth1()
     .scale(150)
     .center([0, 0])
     .rotate([0,0])
