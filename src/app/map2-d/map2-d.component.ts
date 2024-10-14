@@ -51,7 +51,6 @@ export class Map2DComponent implements OnInit {
         .attr('class', `${continent} vk`)
         .on('mouseover', function (d) {
         }).on('mousemove', function (event: any, d: any) {
-          console.log(continent)
           d3.select('#tooltip').style('opacity', 1).style('left', (event.pageX + 10) + 'px').style('top', (event.pageY + 10) + 'px').text(continent)
           d3.select(this).style("opacity", 0.8);
 
@@ -92,6 +91,43 @@ export class Map2DComponent implements OnInit {
         .attr('stroke-width', 0)
 
     });
+
+    //Making the text on Continents
+    const countryName = "China";
+    const selectedCountry = data.find(d => d.properties.name === countryName);
+    console.log('selectedCountry', selectedCountry);
+    const bounds = path.bounds(selectedCountry);
+    const x0 = bounds[0][0];
+    const y0 = bounds[0][1] + 20;
+    const x1 = bounds[1][0] - 35;
+    const y1 = bounds[1][1] - 30;
+    const rectWidth = x1 - x0;
+    const rectHeight = y1 - y0;
+    const text_anomalies = `Anomalies : ${18}`
+
+    svg.append("rect")
+      .attr("class", "highlight")
+      .attr("x", x0)
+      .attr("y", y0)
+      .attr("width", rectWidth)
+      .attr("height", rectHeight)
+      .attr("rx", 5)  // Horizontal corner radius
+      .attr("ry", 5)
+
+    svg.append("text")
+      .attr("class", "label")
+      .attr("x", x0 + rectWidth / 2) // Middle of the rectangle
+      .attr("y", y0 + 10) // Middle of the rectangle
+      .attr("dy", ".35em") // Adjust the vertical alignment of the text
+      .text('Indo-Pacific')
+
+    svg.append("text")
+      .attr("class", "label")
+      .attr("x", x0 + rectWidth / 2)
+      .attr("y", y0 + 24) 
+      .attr("dy", ".35em")
+      .text(text_anomalies)
+
   }
 
 

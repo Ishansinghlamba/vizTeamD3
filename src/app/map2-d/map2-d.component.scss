@@ -1,0 +1,10 @@
+::ng-deep .highlight {
+    fill: rgba(234, 243, 234, 0.5);
+    stroke-width: 2px;
+}
+
+::ng-deep .label {
+    font-size: 10px;
+    text-anchor: middle;
+    fill: black;
+}
