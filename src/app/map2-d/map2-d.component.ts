@@ -26,6 +26,7 @@ export class Map2DComponent implements OnInit {
     let height = 450;
 
     const continents = d3.groups(data, (d: any) => d.continent);
+    console.log('con',continents)
 
     //projection
     let projection = d3.geoNaturalEarth1()
@@ -92,7 +93,7 @@ export class Map2DComponent implements OnInit {
     });
 
 
-    const countries = [{ country: "Russia", continent: "Europe", models: 10, anomalies: 70 }, { country: "Canada", continent: "Americas", models: 10, anomalies: 70 }, { country: "China", continent: "Indo-Pacific", models: 10, anomalies: 70 }];
+    const countries = [{ country: "Russia", continent: "Europe", models: 10, anomalies: 70 }, { country: "USA", continent: "Americas", models: 10, anomalies: 70 }, { country: "China", continent: "Indo-Pacific", models: 10, anomalies: 70 },{ country: "Iraq", continent: "Middle east", models: 10, anomalies: 70 }];
     const width_rect = 90;
     const height_rect = 50;
 
