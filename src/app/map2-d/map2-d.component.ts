@@ -89,34 +89,12 @@ export class Map2DComponent implements OnInit {
         })
         .attr('stroke', 'black')  // Borders for individual countries
         .attr('stroke-width', 0)
-
     });
 
-    //Making the text on Continents
-    // svg.append("text")
-    //   .attr("class", "label")
-    //   .attr("x", x0 + rectWidth / 2) // Middle of the rectangle
-    //   .attr("y", y0 + 10) 
-    //   .attr("dy", ".35em") // Adjust the vertical alignment of the text
-    //   .text('Indo-Pacific')
 
-    // svg.append("text")
-    //   .attr("class", "label")
-    //   .attr("x", x0 + rectWidth / 2)
-    //   .attr("y", y0 + 24)
-    //   .attr("dy", ".35em")
-    //   .text(text_models)
-
-    // svg.append("text")
-    //   .attr("class", "label")
-    //   .attr("x", x0 + rectWidth / 2)
-    //   .attr("y", y0 + 34)
-    //   .attr("dy", ".35em")
-    //   .text(text_anomalies)
-
-    const countries = [{ country: "Russia", continent: "Europe" }, { country: "Canada", continent: "Americas" }, { country: "China", continent: "Indo-Pacific" }];
+    const countries = [{ country: "Russia", continent: "Europe", models: 10, anomalies: 70 }, { country: "Canada", continent: "Americas", models: 10, anomalies: 70 }, { country: "China", continent: "Indo-Pacific", models: 10, anomalies: 70 }];
     const width_rect = 90;
-    const height_rect = 55;
+    const height_rect = 50;
 
     countries.forEach(countryName => {
       // Find the country feature from the data
@@ -141,10 +119,25 @@ export class Map2DComponent implements OnInit {
 
         svg.append("text")
           .attr("class", "label")
-          .attr("x", centroid_x ) // Middle of the rectangle
-          .attr("y", centroid_y- (height_rect / 2)+10)
+          .attr("x", centroid_x) // Middle of the rectangle
+          .attr("y", centroid_y - (height_rect / 2) + 10)
           .attr("dy", ".35em") // Adjust the vertical alignment of the text
           .text(countryName.continent)
+
+
+        svg.append("text")
+          .attr("class", "label")
+          .attr("x", centroid_x)
+          .attr("y", centroid_y - (height_rect / 2) + 30)
+          .attr("dy", ".35em")
+          .text(`Models : ${countryName.models}`)
+
+          svg.append("text")
+            .attr("class", "label")
+            .attr("x", centroid_x)
+            .attr("y", centroid_y - (height_rect / 2) + 40)
+            .attr("dy", ".35em")
+            .text(`Anomalies : ${countryName.anomalies}`)
       }
     });
 
