@@ -29,7 +29,7 @@ export class Map2DComponent implements OnInit {
 
     //projection
     let projection = d3.geoNaturalEarth1()
-      .scale(160)
+      .scale(180)
       .center([10, 10])
       .rotate([0, 0])
       .translate([width / 2, height / 2])
@@ -93,96 +93,60 @@ export class Map2DComponent implements OnInit {
     });
 
     //Making the text on Continents
-
-    //Indo-pacific
-    const countryName = "China";
-    const selectedCountry = data.find(d => d.properties.name === countryName);
-    const bounds = path.bounds(selectedCountry);
-    const x0 = bounds[0][0];
-    const y0 = bounds[0][1] + 20;
-    const x1 = bounds[1][0] - 35;
-    const y1 = bounds[1][1] - 30;
-    const rectWidth = x1 - x0-10;
-    const rectHeight = y1 - y0;
-    const text_models = `Models : ${10}`
-    const text_anomalies = `Anomalies : ${18}`
-
-    svg.append("rect")
-      .attr("class", "highlight")
-      .attr("x", x0)
-      .attr("y", y0)
-      .attr("width", rectWidth)
-      .attr("height", rectHeight)
-      .attr("rx", 5)  // Horizontal corner radius
-      .attr("ry", 5)
-
-    svg.append("text")
-      .attr("class", "label")
-      .attr("x", x0 + rectWidth / 2) // Middle of the rectangle
-      .attr("y", y0 + 10) 
-      .attr("dy", ".35em") // Adjust the vertical alignment of the text
-      .text('Indo-Pacific')
-
-    svg.append("text")
-      .attr("class", "label")
-      .attr("x", x0 + rectWidth / 2)
-      .attr("y", y0 + 24)
-      .attr("dy", ".35em")
-      .text(text_models)
-
-    svg.append("text")
-      .attr("class", "label")
-      .attr("x", x0 + rectWidth / 2)
-      .attr("y", y0 + 34)
-      .attr("dy", ".35em")
-      .text(text_anomalies)
-
-
-
-    //Europe
-    const countryName_europe = "Ukraine";
-    const selectedCountry_europe = data.find(d => d.properties.name === countryName_europe);
-    console.log('selectedCountry_europe',selectedCountry_europe)
-    const bounds_europe = path.bounds(selectedCountry_europe);
-    console.log('bounds_europe',bounds_europe)
-    const x0_europe = bounds_europe[0][0];
-    const y0_europe = bounds_europe[0][1] ;
-    const x1_europe = bounds_europe[1][0] ;
-    const y1_europe = bounds_europe[1][1] ;
-    const rectWidth_europe = x1_europe - x0_europe;
-    const rectHeight_europe = y1_europe - y0_europe;
-    const text_models_europe = `Models : ${70}`
-    const text_anomalies_europe = `Anomalies : ${180}`
-
-    svg.append("rect")
-      .attr("class", "highlight")
-      .attr("x", x0_europe)
-      .attr("y", y0_europe)
-      .attr("width", rectWidth_europe)
-      .attr("height", rectHeight_europe)
-      .attr("rx", 5)  // Horizontal corner radius
-      .attr("ry", 5)
-
-    svg.append("text")
-      .attr("class", "label")
-      .attr("x", rectWidth_europe-40 + 90 / 2) // Middle of the rectangle
-      .attr("y", y0_europe + 30) // Middle of the rectangle
-      .attr("dy", ".35em") // Adjust the vertical alignment of the text
-      .text('Europe')
+    // svg.append("text")
+    //   .attr("class", "label")
+    //   .attr("x", x0 + rectWidth / 2) // Middle of the rectangle
+    //   .attr("y", y0 + 10) 
+    //   .attr("dy", ".35em") // Adjust the vertical alignment of the text
+    //   .text('Indo-Pacific')
 
     // svg.append("text")
     //   .attr("class", "label")
-    //   .attr("x", x0_europe + rectWidth_europe / 2)
-    //   .attr("y", y0_europe + 24)
+    //   .attr("x", x0 + rectWidth / 2)
+    //   .attr("y", y0 + 24)
     //   .attr("dy", ".35em")
-    //   .text(text_models_europe)
+    //   .text(text_models)
 
     // svg.append("text")
     //   .attr("class", "label")
-    //   .attr("x", x0_europe + rectWidth_europe / 2)
-    //   .attr("y", y0_europe + 34)
+    //   .attr("x", x0 + rectWidth / 2)
+    //   .attr("y", y0 + 34)
     //   .attr("dy", ".35em")
-    //   .text(text_anomalies_europe)
+    //   .text(text_anomalies)
+
+    const countries = [{ country: "Russia", continent: "Europe" }, { country: "Canada", continent: "Americas" }, { country: "China", continent: "Indo-Pacific" }];
+    const width_rect = 90;
+    const height_rect = 55;
+
+    countries.forEach(countryName => {
+      // Find the country feature from the data
+      const country = data.find(feature => feature.properties.name === countryName.country);
+
+      if (country) {
+        // Calculate the centroid of the country
+        const centroid = path.centroid(country);
+        const centroid_x = centroid[0];
+        const centroid_y = centroid[1];
+
+        // Append a rectangle at the centroid of the country
+        svg.append("rect")
+          .attr("class", "highlight")
+          .attr("x", centroid_x - (width_rect / 2))
+          .attr("y", centroid_y - (height_rect / 2))
+          .attr("width", width_rect)
+          .attr("height", height_rect)
+          .attr("rx", 5)  // Rounded corner radius for x
+          .attr("ry", 5)  // Rounded corner radius for y
+          .attr("fill", "steelblue");  // Add color or style as desired
+
+        svg.append("text")
+          .attr("class", "label")
+          .attr("x", centroid_x ) // Middle of the rectangle
+          .attr("y", centroid_y- (height_rect / 2)+10)
+          .attr("dy", ".35em") // Adjust the vertical alignment of the text
+          .text(countryName.continent)
+      }
+    });
 
   }
 
