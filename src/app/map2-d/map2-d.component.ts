@@ -29,7 +29,7 @@ export class Map2DComponent implements OnInit {
 
     //projection
     let projection = d3.geoNaturalEarth1()
-      .scale(200)
+      .scale(160)
       .center([10, 10])
       .rotate([0, 0])
       .translate([width / 2, height / 2])
