@@ -26,7 +26,7 @@ export class Map2DComponent implements OnInit {
     let height = 450;
 
     const continents = d3.groups(data, (d: any) => d.continent);
-    console.log('con',continents)
+    console.log('con', continents)
 
     //projection
     let projection = d3.geoNaturalEarth1()
@@ -93,25 +93,23 @@ export class Map2DComponent implements OnInit {
     });
 
 
-    const countries = [{ country: "Russia", continent: "Europe", models: 10, anomalies: 70 }, { country: "USA", continent: "Americas", models: 10, anomalies: 70 }, { country: "China", continent: "Indo-Pacific", models: 10, anomalies: 70 },{ country: "Iraq", continent: "Middle east", models: 10, anomalies: 70 }];
+    const countries = [{ coord: [101,61], continent: "Europe", models: 10, anomalies: 70 }, { coord: [-100,37], continent: "Americas", models: 10, anomalies: 70 }, { coord: [98,32], continent: "Indo-Pacific", models: 10, anomalies: 70 }, { coord: [41,32], continent: "Middle east", models: 10, anomalies: 70 }];
     const width_rect = 90;
     const height_rect = 50;
 
     countries.forEach(countryName => {
-      // Find the country feature from the data
-      const country = data.find(feature => feature.properties.name === countryName.country);
-
-      if (country) {
-        // Calculate the centroid of the country
-        const centroid = path.centroid(country);
-        const centroid_x = centroid[0];
-        const centroid_y = centroid[1];
+       //[longitude,lattitude]
+      // Get the screen coordinates
+      const [lon, lat] = countryName.coord;
+      const screenCoords = projection([lon, lat] );
+      const x = screenCoords[0];
+      const y = screenCoords[1];
 
         // Append a rectangle at the centroid of the country
         svg.append("rect")
           .attr("class", "highlight")
-          .attr("x", centroid_x - (width_rect / 2))
-          .attr("y", centroid_y - (height_rect / 2))
+          .attr("x", x - (width_rect / 2))
+          .attr("y", y - (height_rect / 2))
           .attr("width", width_rect)
           .attr("height", height_rect)
           .attr("rx", 5)  // Rounded corner radius for x
@@ -120,27 +118,44 @@ export class Map2DComponent implements OnInit {
 
         svg.append("text")
           .attr("class", "label")
-          .attr("x", centroid_x) // Middle of the rectangle
-          .attr("y", centroid_y - (height_rect / 2) + 10)
+          .attr("x", x) // Middle of the rectangle
+          .attr("y", y - (height_rect / 2) + 10)
           .attr("dy", ".35em") // Adjust the vertical alignment of the text
           .text(countryName.continent)
 
 
         svg.append("text")
           .attr("class", "label")
-          .attr("x", centroid_x)
-          .attr("y", centroid_y - (height_rect / 2) + 30)
+          .attr("x", x)
+          .attr("y", y - (height_rect / 2) + 30)
           .attr("dy", ".35em")
           .text(`Models : ${countryName.models}`)
 
-          svg.append("text")
-            .attr("class", "label")
-            .attr("x", centroid_x)
-            .attr("y", centroid_y - (height_rect / 2) + 40)
-            .attr("dy", ".35em")
-            .text(`Anomalies : ${countryName.anomalies}`)
-      }
+        svg.append("text")
+          .attr("class", "label")
+          .attr("x", x)
+          .attr("y", y - (height_rect / 2) + 40)
+          .attr("dy", ".35em")
+          .text(`Anomalies : ${countryName.anomalies}`)
+      
     });
+
+
+    //Global image coordinates
+    const globalCoordinates: [number, number] = [-40, 20]; //[longitude,lattitude]
+    // Get the screen coordinates
+    const screenCoords = projection(globalCoordinates);
+    const x = screenCoords[0];
+    const y = screenCoords[1];
+    const imageWidth = 80;
+    const imageHeight = 80;
+
+    svg.append("image")
+      .attr("xlink:href", "https://upload.wikimedia.org/wikipedia/commons/0/09/America_Online_logo.svg")  // Path to your SVG image
+      .attr("x", x - (imageWidth / 2))  // Center the image horizontally
+      .attr("y", y - (imageHeight / 2))  // Center the image vertically
+      .attr("width", imageWidth)         // Set the width of the image
+      .attr("height", imageHeight);
 
   }
 
