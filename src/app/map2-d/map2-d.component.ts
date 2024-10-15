@@ -36,15 +36,14 @@ export class Map2DComponent implements OnInit {
       .translate([width / 2, height / 2])
 
     //setting
-    var svg = d3.select("#map")
+    let svg = d3.select("#map")
       .append("svg")
       .attr("width", '100%')
       .attr("height", '20%')
       .attr('viewBox', `0 0 ${width} ${height}`)
 
-    let map = svg.append("g")
 
-    var path = d3.geoPath().projection(projection)
+    let path = d3.geoPath().projection(projection)
     d3.select('body').append('div').attr('id', 'tooltip').attr('style', 'position: absolute; opacity: 0;');
     continents.forEach(([continent, countries]) => {
       // Create a group for each continent
@@ -93,69 +92,74 @@ export class Map2DComponent implements OnInit {
     });
 
 
-    const countries = [{ coord: [101,61], continent: "Europe", models: 10, anomalies: 70 }, { coord: [-100,37], continent: "Americas", models: 10, anomalies: 70 }, { coord: [98,32], continent: "Indo-Pacific", models: 10, anomalies: 70 }, { coord: [41,32], continent: "Middle east", models: 10, anomalies: 70 }];
+    const countries = [{ coord: [101, 61], continent: "Europe", models: 10, anomalies: 70 }, { coord: [-100, 37], continent: "Americas", models: 10, anomalies: 70 }, { coord: [98, 32], continent: "Indo-Pacific", models: 10, anomalies: 70 }, { coord: [41, 32], continent: "Middle east", models: 10, anomalies: 70 }];
     const width_rect = 90;
     const height_rect = 50;
 
     countries.forEach(countryName => {
-       //[longitude,lattitude]
-      // Get the screen coordinates
       const [lon, lat] = countryName.coord;
-      const screenCoords = projection([lon, lat] );
+      const screenCoords = projection([lon, lat]);
       const x = screenCoords[0];
       const y = screenCoords[1];
 
-        // Append a rectangle at the centroid of the country
-        svg.append("rect")
-          .attr("class", "highlight")
-          .attr("x", x - (width_rect / 2))
-          .attr("y", y - (height_rect / 2))
-          .attr("width", width_rect)
-          .attr("height", height_rect)
-          .attr("rx", 5)  // Rounded corner radius for x
-          .attr("ry", 5)  // Rounded corner radius for y
-          .attr("fill", "steelblue");  // Add color or style as desired
+      // Append a rectangle at the centroid of the country
+      svg.append("rect")
+        .attr("class", "highlight")
+        .attr("x", x - (width_rect / 2))
+        .attr("y", y - (height_rect / 2))
+        .attr("width", width_rect)
+        .attr("height", height_rect)
+        .attr("rx", 5)  // Rounded corner radius for x
+        .attr("ry", 5)  // Rounded corner radius for y
+        .attr("fill", "steelblue");  // Add color or style as desired
 
-        svg.append("text")
-          .attr("class", "label")
-          .attr("x", x) // Middle of the rectangle
-          .attr("y", y - (height_rect / 2) + 10)
-          .attr("dy", ".35em") // Adjust the vertical alignment of the text
-          .text(countryName.continent)
+      svg.append("text")
+        .attr("class", "label")
+        .attr("x", x) // Middle of the rectangle
+        .attr("y", y - (height_rect / 2) + 10)
+        .attr("dy", ".35em") // Adjust the vertical alignment of the text
+        .text(countryName.continent)
 
 
-        svg.append("text")
-          .attr("class", "label")
-          .attr("x", x)
-          .attr("y", y - (height_rect / 2) + 30)
-          .attr("dy", ".35em")
-          .text(`Models : ${countryName.models}`)
+      svg.append("text")
+        .attr("class", "label")
+        .attr("x", x)
+        .attr("y", y - (height_rect / 2) + 30)
+        .attr("dy", ".35em")
+        .text(`Models : ${countryName.models}`)
 
-        svg.append("text")
-          .attr("class", "label")
-          .attr("x", x)
-          .attr("y", y - (height_rect / 2) + 40)
-          .attr("dy", ".35em")
-          .text(`Anomalies : ${countryName.anomalies}`)
-      
+      svg.append("text")
+        .attr("class", "label")
+        .attr("x", x)
+        .attr("y", y - (height_rect / 2) + 40)
+        .attr("dy", ".35em")
+        .text(`Anomalies : ${countryName.anomalies}`)
+
     });
 
 
-    //Global image coordinates
-    const globalCoordinates: [number, number] = [-40, 20]; //[longitude,lattitude]
-    // Get the screen coordinates
-    const screenCoords = projection(globalCoordinates);
-    const x = screenCoords[0];
-    const y = screenCoords[1];
+
+    //coordinates for space and global
+    const coordAll = [{ coord: [-40, 20], img: "https://upload.wikimedia.org/wikipedia/commons/0/09/America_Online_logo.svg" }, { coord: [-140, -41], img: "https://upload.wikimedia.org/wikipedia/commons/0/09/America_Online_logo.svg" }]
     const imageWidth = 80;
     const imageHeight = 80;
+    coordAll.forEach(data_all => {
 
-    svg.append("image")
-      .attr("xlink:href", "https://upload.wikimedia.org/wikipedia/commons/0/09/America_Online_logo.svg")  // Path to your SVG image
-      .attr("x", x - (imageWidth / 2))  // Center the image horizontally
-      .attr("y", y - (imageHeight / 2))  // Center the image vertically
-      .attr("width", imageWidth)         // Set the width of the image
-      .attr("height", imageHeight);
+      const [lon, lat] = data_all.coord;
+      const screenCoords = projection([lon, lat]);
+      const x = screenCoords[0];
+      const y = screenCoords[1];
+
+
+
+      svg.append("image")
+        .attr("xlink:href", data_all.img)
+        .attr("x", x - (imageWidth / 2))  // Center the image horizontally
+        .attr("y", y - (imageHeight / 2))  
+        .attr("width", imageWidth)         
+        .attr("height", imageHeight);
+
+    })
 
   }
 
