@@ -46,7 +46,7 @@ export class Map2DComponent implements OnInit {
 
 
     let path = d3.geoPath().projection(projection)
-    d3.select('body').append('div').attr('id', 'tooltip').attr('style', 'position: absolute; opacity: 0;');
+    // d3.select('body').append('div').attr('id', 'tooltip').attr('style', 'position: absolute; opacity: 0;');
     continents.forEach(([continent, countries]) => {
       // Create a group for each continent
       const continentGroup = svg.append('g')
@@ -55,11 +55,13 @@ export class Map2DComponent implements OnInit {
         }).on('mousemove', function (event: any, d: any) {
           d3.select('#tooltip').style('opacity', 1).style('left', (event.pageX + 10) + 'px').style('top', (event.pageY + 10) + 'px').text(continent)
           d3.select(this).style("opacity", 0.8);
+          d3.select(this).style("cursor", "pointer"); 
 
         })
         .on('mouseout', function () {
           d3.select('#tooltip').style('opacity', 0)
           d3.select(this).style("opacity", 1);
+          d3.select(this).style("cursor", "default"); 
         })
 
       // Adjust the translation based on the continent
@@ -94,7 +96,7 @@ export class Map2DComponent implements OnInit {
     });
 
 
-    const countries = [{ coord: [101, 61], continent: "Europe", models: 10, anomalies: 70 }, { coord: [-100, 37], continent: "Americas", models: 10, anomalies: 70 }, { coord: [98, 32], continent: "Indo-Pacific", models: 10, anomalies: 70 }, { coord: [45, 27], continent: "Middle East", models: 10, anomalies: 70 }];
+    const countries = [{ coord: [101, 61], continent: "Europe", models: 10, anomalies: 70 }, { coord: [-100, 40], continent: "Americas", models: 10, anomalies: 70 }, { coord: [98, 32], continent: "Indo-Pacific", models: 10, anomalies: 70 }, { coord: [45, 27], continent: "Middle East", models: 10, anomalies: 70 }];
     const width_rect = 70;
     const height_rect = 45;
 
@@ -142,7 +144,8 @@ export class Map2DComponent implements OnInit {
 
 
     //coordinates for space and global
-    const coordAll = [{ coord: [-40, 20], img: "assets/svg/Globe.svg" }, { coord: [-140, -41], img: "assets/svg/Satellite.svg" }]
+    // , { coord: [-140, -41], img: "assets/svg/Satellite.svg" }
+    const coordAll = [{ coord: [-40, 20], img: "assets/svg/Globe.svg" }]
     const imageWidth = 80;
     const imageHeight = 60;
     coordAll.forEach(data_all => {
