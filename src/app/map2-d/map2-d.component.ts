@@ -4,6 +4,8 @@ import myworlddata from '../Data/world.json';
 
 
 
+
+
 @Component({
   selector: 'app-map2-d',
   templateUrl: './map2-d.component.html',
@@ -140,7 +142,7 @@ export class Map2DComponent implements OnInit {
 
 
     //coordinates for space and global
-    const coordAll = [{ coord: [-40, 20], img: "https://upload.wikimedia.org/wikipedia/commons/0/09/America_Online_logo.svg" }, { coord: [-140, -41], img: "https://upload.wikimedia.org/wikipedia/commons/0/09/America_Online_logo.svg" }]
+    const coordAll = [{ coord: [-40, 20], img: "assets/svg/Globe.svg" }, { coord: [-140, -41], img: "assets/svg/Satellite.svg" }]
     const imageWidth = 80;
     const imageHeight = 80;
     coordAll.forEach(data_all => {
