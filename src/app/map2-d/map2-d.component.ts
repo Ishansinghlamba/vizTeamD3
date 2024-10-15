@@ -94,9 +94,9 @@ export class Map2DComponent implements OnInit {
     });
 
 
-    const countries = [{ coord: [101, 61], continent: "Europe", models: 10, anomalies: 70 }, { coord: [-100, 37], continent: "Americas", models: 10, anomalies: 70 }, { coord: [98, 32], continent: "Indo-Pacific", models: 10, anomalies: 70 }, { coord: [41, 32], continent: "Middle east", models: 10, anomalies: 70 }];
-    const width_rect = 90;
-    const height_rect = 50;
+    const countries = [{ coord: [101, 61], continent: "Europe", models: 10, anomalies: 70 }, { coord: [-100, 37], continent: "Americas", models: 10, anomalies: 70 }, { coord: [98, 32], continent: "Indo-Pacific", models: 10, anomalies: 70 }, { coord: [45, 27], continent: "Middle East", models: 10, anomalies: 70 }];
+    const width_rect = 70;
+    const height_rect = 45;
 
     countries.forEach(countryName => {
       const [lon, lat] = countryName.coord;
@@ -116,7 +116,7 @@ export class Map2DComponent implements OnInit {
         .attr("fill", "steelblue");  // Add color or style as desired
 
       svg.append("text")
-        .attr("class", "label")
+        .attr("class", "label boxTitle")
         .attr("x", x) // Middle of the rectangle
         .attr("y", y - (height_rect / 2) + 10)
         .attr("dy", ".35em") // Adjust the vertical alignment of the text
@@ -126,14 +126,14 @@ export class Map2DComponent implements OnInit {
       svg.append("text")
         .attr("class", "label")
         .attr("x", x)
-        .attr("y", y - (height_rect / 2) + 30)
+        .attr("y", y - (height_rect / 2) + 25)
         .attr("dy", ".35em")
         .text(`Models : ${countryName.models}`)
 
       svg.append("text")
         .attr("class", "label")
         .attr("x", x)
-        .attr("y", y - (height_rect / 2) + 40)
+        .attr("y", y - (height_rect / 2) + 35)
         .attr("dy", ".35em")
         .text(`Anomalies : ${countryName.anomalies}`)
 
@@ -144,7 +144,7 @@ export class Map2DComponent implements OnInit {
     //coordinates for space and global
     const coordAll = [{ coord: [-40, 20], img: "assets/svg/Globe.svg" }, { coord: [-140, -41], img: "assets/svg/Satellite.svg" }]
     const imageWidth = 80;
-    const imageHeight = 80;
+    const imageHeight = 60;
     coordAll.forEach(data_all => {
 
       const [lon, lat] = data_all.coord;
@@ -157,8 +157,8 @@ export class Map2DComponent implements OnInit {
       svg.append("image")
         .attr("xlink:href", data_all.img)
         .attr("x", x - (imageWidth / 2))  // Center the image horizontally
-        .attr("y", y - (imageHeight / 2))  
-        .attr("width", imageWidth)         
+        .attr("y", y - (imageHeight / 2))
+        .attr("width", imageWidth)
         .attr("height", imageHeight);
 
     })

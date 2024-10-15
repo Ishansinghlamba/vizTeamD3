@@ -10,3 +10,7 @@
     text-anchor: middle;
     fill: black;
 }
+
+::ng-deep .boxTitle {
+    font-weight: bolder;
+}
