@@ -88,13 +88,12 @@ export class Map2DComponent implements OnInit {
         .attr('class', 'continent')
         .attr('d', path)
         .attr("fill", function (d: any) {
-          let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945' : d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545' : d.continent == 'europe' ? '#710C0C'  :  d.continent == 'IP' ? 'none'
-          : 'white';
+          let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945' : d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545' : d.continent == 'europe' ? '#710C0C' : 'none';
           return color
         })
         .attr("stroke-width", function (d: any) {
           console.log(d)
-          let width = (  d.continent ==  'IP' ? 1 : 0);
+          let width = (  d.continent ==  'border' ? 1 : 0);
           return width
         })
         .style("stroke", "white")
