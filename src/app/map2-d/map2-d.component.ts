@@ -24,10 +24,10 @@ export class Map2DComponent implements OnInit {
   makeMap() {
 
     const existingSvg = d3.select("svg");
-    if (!existingSvg.empty()) {   
+    if (!existingSvg.empty()) {
       existingSvg.remove();  // Remove it if it exists 
-      }
-       
+    }
+
 
     let data = this.myworlddata2
     //dimensions
@@ -46,10 +46,8 @@ export class Map2DComponent implements OnInit {
 
     //setting
     let svg = d3.select("#map")
-    .on('click', () => {
-        console.log('zoom from svg', this.zoom)
+      .on('click', () => {
         if (this.zoom == 1) {
-          console.log('hello from inside')
           this.makeMap()
         }
       })
@@ -66,7 +64,6 @@ export class Map2DComponent implements OnInit {
       const continentGroup = svg.append('g')
         .attr('class', `${continent} vk`)
         .on('click', (event: any) => {
-          console.log(continent)
           const selectedContinent = projection_continents.find(region => region.continent === continent);
 
           const [targetLongitude, targetLatitude] = selectedContinent.targetCoord;
@@ -80,7 +77,6 @@ export class Map2DComponent implements OnInit {
 
           d3.select('svg').transition().duration(750)
             .attr('transform', `translate(${dx},${dy}) scale(1.5)`);
-          console.log('zooom g', this.zoom);
           event.stopPropagation()
           this.zoom = 1;
         })
@@ -111,7 +107,6 @@ export class Map2DComponent implements OnInit {
           return color
         })
         .attr("stroke-width", function (d: any) {
-          console.log(d)
           let width = (d.continent == 'border' ? 1 : 0);
           return width
         })
@@ -120,7 +115,7 @@ export class Map2DComponent implements OnInit {
     });
 
 
-    const countries = [{ coord: [101, 61], continent: "Europe", models: 10, anomalies: 70 }, { coord: [-100, 40], continent: "Americas", models: 10, anomalies: 70 }, { coord: [98, 32], continent: "Indo-Pacific", models: 0, anomalies: 70 }, { coord: [45, 27], continent: "Middle East", models: 10, anomalies: 70 },{ coord: [-39, 2], continent: "Global", models: 0, anomalies: 70 }];
+    const countries = [{ coord: [101, 61], continent: "Europe", models: 10, anomalies: 70 }, { coord: [-100, 40], continent: "Americas", models: 10, anomalies: 70 }, { coord: [98, 32], continent: "Indo-Pacific", models: 50, anomalies: 70 }, { coord: [45, 27], continent: "Middle East", models: 10, anomalies: 70 }, { coord: [-39, 2], continent: "Global", models: 90, anomalies: 70 }, { coord: [-173, -50], continent: "Space", models: 0, anomalies: 70 }];
     const countriuesFilteredData = countries.filter(obj => obj.models !== 0);
     const width_rect = 70;
     const height_rect = 45;
@@ -170,10 +165,19 @@ export class Map2DComponent implements OnInit {
 
     //coordinates for space and global
     //Append them only if models value is greater than 0 for satellite and globe.
-    const coordAll = [{ coord: [-40, 20], img: "assets/svg/Globe.svg" },{ coord: [-140, -41], img: "assets/svg/Satellite.svg" }]
+    const spaceGlobal = countries.filter((item: any) => (item.continent === 'Global' || item.continent === 'Space') && item.models !== 0);
+    const spaceGlobalmapped = spaceGlobal.map(item => {
+      if (item.continent === 'Global') {
+        return { ...item, coord: [-40, 20], img: "assets/svg/Globe.svg" }
+      } else if (item.continent === 'Space') {
+        return { ...item, coord: [-140, -41], img: "assets/svg/Satellite.svg" }
+      }
+    })
+
+    
     const imageWidth = 80;
     const imageHeight = 60;
-    coordAll.forEach(data_all => {
+    spaceGlobalmapped.forEach(data_all => {
 
       const [lon, lat] = data_all.coord;
       const screenCoords = projection([lon, lat]);
