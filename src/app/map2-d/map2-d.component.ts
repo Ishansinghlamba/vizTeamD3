@@ -26,9 +26,9 @@ export class Map2DComponent implements OnInit {
     //dimensions
     let width = 1000
     let height = 450;
+    let projection_continents = [{ currentCoord: [22, 1], continent: "africa", targetCoord: [-79, 6] }, { currentCoord: [-81, 9], continent: "americas", targetCoord: [-72, 12] }, { currentCoord: [91,38], continent: "indo-pacific", targetCoord: [-79, 6] },{ currentCoord: [96,63], continent: "europe", targetCoord: [-79, 6] },{ currentCoord: [47,33], continent: "middle east", targetCoord: [-79, 6] }]
 
     const continents = d3.groups(data, (d: any) => d.continent);
-    console.log('con', continents)
 
     //projection
     let projection = d3.geoNaturalEarth1()
@@ -51,35 +51,37 @@ export class Map2DComponent implements OnInit {
       // Create a group for each continent
       const continentGroup = svg.append('g')
         .attr('class', `${continent} vk`)
+        .on('click', function () {
+          console.log(continent)
+          const selectedContinent = projection_continents.find(region => region.continent === continent);
+
+          const [targetLongitude, targetLatitude] = selectedContinent.targetCoord;
+          const [currentLongitude, currentLatitude] = selectedContinent.currentCoord;
+
+
+          const targetCoords = projection([targetLongitude, targetLatitude]);
+          const currentCoords = projection([currentLongitude, currentLatitude])
+          const dx = (targetCoords[0] - currentCoords[0]) * 1.5;
+          const dy = (targetCoords[1] - currentCoords[1]) * 1.5;
+
+          d3.select('svg').transition().duration(750)
+            .attr('transform', `translate(${dx},${dy}) scale(1.5)`)
+        })
         .on('mouseover', function (d) {
         }).on('mousemove', function (event: any, d: any) {
           d3.select('#tooltip').style('opacity', 1).style('left', (event.pageX + 10) + 'px').style('top', (event.pageY + 10) + 'px').text(continent)
           d3.select(this).style("opacity", 0.8);
-          d3.select(this).style("cursor", "pointer"); 
+          d3.select(this).style("cursor", "pointer");
 
         })
         .on('mouseout', function () {
           d3.select('#tooltip').style('opacity', 0)
           d3.select(this).style("opacity", 1);
-          d3.select(this).style("cursor", "default"); 
+          d3.select(this).style("cursor", "default");
         })
 
-      // // Adjust the translation based on the continent
-      // let translation = [0, 0]; // Default translation
-      // if (continent === 'africa') {
-      //   translation = [-6, 2];  // Shift down
-      // } else if (continent === 'indo-pacific') {
-      //   translation = [0, 2];  // Shift right
-      // } else if (continent === 'europe') {
-      //   translation = [0, 0];  // Shift up
-      // } else if (continent === 'middle east') {
-      //   translation = [-3, 4];  // Shift northwest
-      // } else if (continent === 'americas') {
-      //   translation = [0, 0];  // Shift southwest
-      // }
 
-      // // Apply translation to the group of countries in the continent
-      // continentGroup.attr('transform', `translate(${translation[0]}, ${translation[1]})`);
+
 
       // Draw the countries for this continent
       continentGroup.selectAll('path')
@@ -88,17 +90,15 @@ export class Map2DComponent implements OnInit {
         .attr('class', 'continent')
         .attr('d', path)
         .attr("fill", function (d: any) {
-          let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945' : d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545' : d.continent == 'europe' ? '#710C0C'  :  d.continent == 'IP' ? 'none'
-          : 'white';
+          let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945' : d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545' : d.continent == 'europe' ? '#710C0C' : d.continent == 'IP' ? 'none'
+            : 'white';
           return color
         })
         .attr("stroke-width", function (d: any) {
-          console.log(d)
-          let width = (  d.continent ==  'IP' ? 1 : 0);
+          let width = (d.continent == 'IP' ? 1 : 0);
           return width
         })
         .style("stroke", "white")
-        .on('click', (event, d) => this.onCountryClick(d,path,projection))
 
     });
 
@@ -176,48 +176,7 @@ export class Map2DComponent implements OnInit {
   }
 
 
-  onCountryClick(d,path,projection){
-    let polygon ={
-      "type": "Polygon",
-      "coordinates": [
-        [
-          [
-            -172.1300275437599,
-            78.78072511469634
-          ],
-          [
-            -172.1300275437599,
-            -57.75802863351646
-          ],
-          [
-            -22.38770534617632,
-            -57.75802863351646
-          ],
-          [
-            -22.38770534617632,
-            78.78072511469634
-          ],
-          [
-            -172.1300275437599,
-            78.78072511469634
-          ]
-        ]
-      ]
-    }
-    const bounds = path.bounds(polygon);
-    const dx = bounds[1][0] - bounds[0][0];
-    const dy = bounds[1][1] - bounds[0][1];
-    const x = (bounds[0][0] + bounds[1][0]) / 2;
-    const y = (bounds[0][1] + bounds[1][1]) / 2;
-    const scale = Math.max(1, Math.min(8, 0.9 / Math.max(dx / 1000, dy / 450)));
-    const translate = [1000 / 2 - scale * x, 450 / 2 - scale * y];
-    d3.select('svg').transition()
-      .duration(750)
-      .attr('transform', `translate(${-x}, 0)`)
 
-      // d3.select('svg').attr('transform', `translate(${-x}, 0)`);
-
-  }
 
 
 }
