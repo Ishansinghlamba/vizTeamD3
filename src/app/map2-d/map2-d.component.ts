@@ -13,7 +13,7 @@ import myworlddata from '../Data/world.json';
 })
 export class Map2DComponent implements OnInit {
   myworlddata2: any = myworlddata.features
-
+  zoom: number = 0;
 
   constructor() { }
 
@@ -22,11 +22,18 @@ export class Map2DComponent implements OnInit {
   }
 
   makeMap() {
+
+    const existingSvg = d3.select("svg");
+    if (!existingSvg.empty()) {   
+      existingSvg.remove();  // Remove it if it exists 
+      }
+       
+
     let data = this.myworlddata2
     //dimensions
     let width = 1000
     let height = 450;
-    let projection_continents = [{ currentCoord: [22, 1], continent: "africa", targetCoord: [-79, 6] }, { currentCoord: [-81, 9], continent: "americas", targetCoord: [-72, 12] }, { currentCoord: [91,38], continent: "indo-pacific", targetCoord: [-79, 6] },{ currentCoord: [96,63], continent: "europe", targetCoord: [-79, 6] },{ currentCoord: [47,33], continent: "middle east", targetCoord: [-79, 6] }]
+    let projection_continents = [{ currentCoord: [22, 1], continent: "africa", targetCoord: [-79, 6] }, { currentCoord: [-81, 9], continent: "americas", targetCoord: [-72, 12] }, { currentCoord: [91, 38], continent: "indo-pacific", targetCoord: [-79, 6] }, { currentCoord: [96, 63], continent: "europe", targetCoord: [-79, 6] }, { currentCoord: [47, 33], continent: "middle east", targetCoord: [-79, 6] }]
 
     const continents = d3.groups(data, (d: any) => d.continent);
 
@@ -39,6 +46,13 @@ export class Map2DComponent implements OnInit {
 
     //setting
     let svg = d3.select("#map")
+    .on('click', () => {
+        console.log('zoom from svg', this.zoom)
+        if (this.zoom == 1) {
+          console.log('hello from inside')
+          this.makeMap()
+        }
+      })
       .append("svg")
       .attr("width", '100%')
       .attr("height", '20%')
@@ -51,7 +65,7 @@ export class Map2DComponent implements OnInit {
       // Create a group for each continent
       const continentGroup = svg.append('g')
         .attr('class', `${continent} vk`)
-        .on('click', function () {
+        .on('click', (event: any) => {
           console.log(continent)
           const selectedContinent = projection_continents.find(region => region.continent === continent);
 
@@ -65,7 +79,10 @@ export class Map2DComponent implements OnInit {
           const dy = (targetCoords[1] - currentCoords[1]) * 1.5;
 
           d3.select('svg').transition().duration(750)
-            .attr('transform', `translate(${dx},${dy}) scale(1.5)`)
+            .attr('transform', `translate(${dx},${dy}) scale(1.5)`);
+          console.log('zooom g', this.zoom);
+          event.stopPropagation()
+          this.zoom = 1;
         })
         .on('mouseover', function (d) {
         }).on('mousemove', function (event: any, d: any) {
@@ -95,7 +112,7 @@ export class Map2DComponent implements OnInit {
         })
         .attr("stroke-width", function (d: any) {
           console.log(d)
-          let width = (  d.continent ==  'border' ? 1 : 0);
+          let width = (d.continent == 'border' ? 1 : 0);
           return width
         })
         .style("stroke", "white")
@@ -151,8 +168,7 @@ export class Map2DComponent implements OnInit {
 
 
     //coordinates for space and global
-    // , { coord: [-140, -41], img: "assets/svg/Satellite.svg" }
-    const coordAll = [{ coord: [-40, 20], img: "assets/svg/Globe.svg" }]
+    const coordAll = [{ coord: [-40, 20], img: "assets/svg/Globe.svg" },{ coord: [-140, -41], img: "assets/svg/Satellite.svg" }]
     const imageWidth = 80;
     const imageHeight = 60;
     coordAll.forEach(data_all => {
