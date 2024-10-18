@@ -39,8 +39,8 @@ export class Map2DComponent implements OnInit {
       { "region": "indo-pacific", "models": 13, "anomalies": 134, "maxAnomalies": 6 },
       { "region": "middle east", "models": 6, "anomalies": 7, "maxAnomalies": 3 },
       { "region": "europe", "models": 12, "anomalies": 19, "maxAnomalies": 1 },
-      { "region": "space", "models": 0, "anomalies": 19, "maxAnomalies": 1 },
-      { "region": "global", "models": 0, "anomalies": 19, "maxAnomalies": 1 }
+      { "region": "space", "models": 4, "anomalies": 19, "maxAnomalies": 1 },
+      { "region": "global", "models": 3, "anomalies": 19, "maxAnomalies": 1 }
     ];
     let mainData = backendData.map(item => {
       if (item.region === 'americas') {
@@ -56,7 +56,7 @@ export class Map2DComponent implements OnInit {
       } else if (item.region === 'global') {
         return { ...item, coord: [-39, 2], imgcoord: [-40, 20], img: "assets/svg/Globe.svg" }
       } else if (item.region === 'space') {
-        return { ...item, coord: [-173, -50], imgcoord: [-140, -41], img: "assets/svg/Satellite.svg" }
+        return { ...item, coord: [-155, -40], imgcoord: [-140, -20], img: "assets/svg/Satellite.svg" }
       }
     })
    
@@ -147,7 +147,7 @@ export class Map2DComponent implements OnInit {
 
  
     const countriuesFilteredData = mainData.filter(obj => obj.models !== 0);
-    const width_rect = 80;
+    const width_rect = 85;
     const height_rect = 50;
 
     countriuesFilteredData.forEach(countryName => {
@@ -176,6 +176,7 @@ export class Map2DComponent implements OnInit {
           </feMerge>
         `);
 
+      
       // Append a rectangle at the centroid of the country
       svg.append("rect")
         .attr("class", "highlight")
@@ -192,7 +193,7 @@ export class Map2DComponent implements OnInit {
         .attr("x", x) // Middle of the rectangle
         .attr("y", y - (height_rect / 2) + 10)
         .attr("dy", ".35em") // Adjust the vertical alignment of the text
-        .text(countryName.region)
+        .text(this.capitalizeWords(countryName.region))
 
       svg.append("line")
         .attr("x1", x - 20)  // Start point of the line (left)
@@ -208,14 +209,14 @@ export class Map2DComponent implements OnInit {
         .attr("x", x)
         .attr("y", y - (height_rect / 2) + 30)
         .attr("dy", ".35em")
-        .text(`Models : ${countryName.models}`)
+        .text(`Models :  ${d3.format(',.0f')(countryName.models)}`)
 
       svg.append("text")
         .attr("class", "label")
         .attr("x", x)
         .attr("y", y - (height_rect / 2) + 40)
         .attr("dy", ".35em")
-        .text(`Anomalies : ${countryName.anomalies}`)
+        .text(`Anomalies : ${d3.format(',.0f')(countryName.anomalies)}`)
 
     });
 
@@ -245,6 +246,14 @@ export class Map2DComponent implements OnInit {
 
     })
 
+  }
+
+  // Helper function to Capitalize Titles
+  capitalizeWords(str: string): string {
+    return str
+      .split(/[-\s]/)  // Split by both spaces and hyphens
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())  // Capitalize each word
+      .join('-');  // Join words back with hyphens where applicable
   }
 
 
