@@ -1,16 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
 ::ng-deep .highlight {
-    fill: rgba(234, 243, 234, 0.5);
-    // fill: rgba(11, 83, 239, 0.5);
-
-    stroke-width: 2px;
-}
-
-::ng-deep .label {
-    font-size: 10px;
-    text-anchor: middle;
-    fill: black;
+    fill: #F5F5F5;
+    stroke: rgba(84, 96, 101, 0.6);
+    stroke-width: 0.1px;
 }
 
 ::ng-deep .boxTitle {
+    font-family: "Mulish", sans-serif !important;
+    font-size: 10px;
+    text-anchor: middle;
+    fill: #263338;
     font-weight: bolder;
+}
+
+::ng-deep .label {
+    font-family: "Mulish", sans-serif !important;
+    font-size: 9px;
+    text-anchor: middle;
+    fill: #243339;
+    font-weight:400;
 }
