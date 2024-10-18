@@ -115,16 +115,36 @@ export class Map2DComponent implements OnInit {
     });
 
 
-    const countries = [{ coord: [101, 61], continent: "Europe", models: 10, anomalies: 70 }, { coord: [-100, 40], continent: "Americas", models: 10, anomalies: 70 }, { coord: [98, 32], continent: "Indo-Pacific", models: 50, anomalies: 70 }, { coord: [45, 27], continent: "Middle East", models: 10, anomalies: 70 }, { coord: [-39, 2], continent: "Global", models: 90, anomalies: 70 }, { coord: [-173, -50], continent: "Space", models: 0, anomalies: 70 }];
+    const countries = [{ coord: [101, 61], continent: "Europe", models: 10, anomalies: 70, "maxAnomalies": 1 }, { coord: [-100, 40], continent: "Americas", models: 10, anomalies: 70, "maxAnomalies": 2}, { coord: [98, 32], continent: "Indo-Pacific", models: 50, anomalies: 70, "maxAnomalies": 6}, { coord: [45, 27], continent: "Middle East", models: 10, anomalies: 70, "maxAnomalies": 3 }, { coord: [-39, 2], continent: "Global", models: 90, anomalies: 70 }, { coord: [-150, -40], continent: "Space", models: 1, anomalies: 70 }, { coord: [25, 5], continent: "Africa", models: 3, anomalies: 21, "maxAnomalies": 4 }];
     const countriuesFilteredData = countries.filter(obj => obj.models !== 0);
-    const width_rect = 70;
-    const height_rect = 45;
+    const width_rect = 80;
+    const height_rect = 50;
 
     countriuesFilteredData.forEach(countryName => {
       const [lon, lat] = countryName.coord;
       const screenCoords = projection([lon, lat]);
       const x = screenCoords[0];
       const y = screenCoords[1];
+
+      const defs = svg.append("defs");
+
+      // Box Shadow for text box
+      defs.append("filter")
+        .attr("id", "drop-shadow")
+        .attr("x", "-50%")
+        .attr("y", "-50%")
+        .attr("width", "200%")
+        .attr("height", "200%")
+        .html(`
+          <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
+          <feOffset dx="2" dy="2" result="offsetBlur" />
+          <feFlood flood-color="rgba(0, 0, 0, 0.3)" />
+          <feComposite in2="offsetBlur" operator="in" />
+          <feMerge>
+            <feMergeNode />  <!-- Shadow -->
+            <feMergeNode in="SourceGraphic" />  <!-- Original element -->
+          </feMerge>
+        `);
 
       // Append a rectangle at the centroid of the country
       svg.append("rect")
@@ -135,27 +155,35 @@ export class Map2DComponent implements OnInit {
         .attr("height", height_rect)
         .attr("rx", 5)  // Rounded corner radius for x
         .attr("ry", 5)  // Rounded corner radius for y
-        .attr("fill", "steelblue");  // Add color or style as desired
+        .attr("filter", "url(#drop-shadow)"); 
 
       svg.append("text")
-        .attr("class", "label boxTitle")
+        .attr("class", "boxTitle")
         .attr("x", x) // Middle of the rectangle
         .attr("y", y - (height_rect / 2) + 10)
         .attr("dy", ".35em") // Adjust the vertical alignment of the text
         .text(countryName.continent)
 
+      svg.append("line")
+        .attr("x1", x - 20)  // Start point of the line (left)
+        .attr("x2", x + 20)  // End point of the line (right)
+        .attr("y1", y - (height_rect / 2) + 20)  // Vertical position of the line
+        .attr("y2", y - (height_rect / 2) + 20)  // Same as y1 (horizontal line)
+        .attr("stroke", "#F6BE00")  // Yellow color
+        .attr("stroke-width", 3);  // Thickness of the line
+
 
       svg.append("text")
         .attr("class", "label")
         .attr("x", x)
-        .attr("y", y - (height_rect / 2) + 25)
+        .attr("y", y - (height_rect / 2) + 30)
         .attr("dy", ".35em")
         .text(`Models : ${countryName.models}`)
 
       svg.append("text")
         .attr("class", "label")
         .attr("x", x)
-        .attr("y", y - (height_rect / 2) + 35)
+        .attr("y", y - (height_rect / 2) + 40)
         .attr("dy", ".35em")
         .text(`Anomalies : ${countryName.anomalies}`)
 
@@ -170,7 +198,7 @@ export class Map2DComponent implements OnInit {
       if (item.continent === 'Global') {
         return { ...item, coord: [-40, 20], img: "assets/svg/Globe.svg" }
       } else if (item.continent === 'Space') {
-        return { ...item, coord: [-140, -41], img: "assets/svg/Satellite.svg" }
+        return { ...item, coord: [-140, -21], img: "assets/svg/Satellite.svg" }
       }
     })
 
