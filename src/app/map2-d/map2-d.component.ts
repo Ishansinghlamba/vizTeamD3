@@ -46,7 +46,7 @@ export class Map2DComponent implements OnInit {
       if (item.region === 'americas') {
         return { ...item, coord: [-100, 40], currentCoord: [-81, 9], targetCoord: [-72, 12] }
       } else if (item.region === 'africa') {
-        return { ...item, coord: [25, 5], currentCoord: [-81, 9], targetCoord: [-72, 12] }
+        return { ...item, coord: [25, 5], currentCoord: [-81, 9], targetCoord: [-72, 6] }
       } else if (item.region === 'indo-pacific') {
         return { ...item, coord: [98, 32], currentCoord: [91, 38], targetCoord: [-79, 6] }
       } else if (item.region === 'middle east') {
