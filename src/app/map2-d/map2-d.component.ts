@@ -63,9 +63,12 @@ export class Map2DComponent implements OnInit {
       // Create a group for each continent
       const continentGroup = svg.append('g')
         .attr('class', `${continent} vk`)
+        .attr("fill", function (d: any) {
+          let color = continent == 'americas' ? '#F6C125' : continent == 'middle east' ? '#F48945' : continent == 'africa' ? '#7FC546' : continent == 'indo-pacific' ? '#CD4545' : continent == 'europe' ? '#710C0C' : 'none';
+          return color
+        })
         .on('click', (event: any) => {
           const selectedContinent = projection_continents.find(region => region.continent === continent);
-
           const [targetLongitude, targetLatitude] = selectedContinent.targetCoord;
           const [currentLongitude, currentLatitude] = selectedContinent.currentCoord;
 
@@ -102,10 +105,10 @@ export class Map2DComponent implements OnInit {
         .enter().append('path')
         .attr('class', 'continent')
         .attr('d', path)
-        .attr("fill", function (d: any) {
-          let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945' : d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545' : d.continent == 'europe' ? '#710C0C' : 'none';
-          return color
-        })
+        // .attr("fill", function (d: any) {
+        //   let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945' : d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545' : d.continent == 'europe' ? '#710C0C' : 'none';
+        //   return color
+        // })
         .attr("stroke-width", function (d: any) {
           let width = (d.continent == 'border' ? 1 : 0);
           return width
