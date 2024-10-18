@@ -14,6 +14,7 @@ import myworlddata from '../Data/world.json';
 export class Map2DComponent implements OnInit {
   myworlddata2: any = myworlddata.features
   zoom: number = 0;
+  finddata:any =[]
 
   constructor() { }
 
@@ -34,12 +35,12 @@ export class Map2DComponent implements OnInit {
     let width = 1000
     let height = 450;
     let backendData = [
-      { "region": "americas", "models": 1, "anomalies": 5, "maxAnomalies": 2 },
-      { "region": "africa", "models": 3, "anomalies": 21, "maxAnomalies": 4 },
-      { "region": "indo-pacific", "models": 13, "anomalies": 134, "maxAnomalies": 6 },
-      { "region": "middle east", "models": 6, "anomalies": 7, "maxAnomalies": 3 },
+      { "region": "americas", "models": 1, "anomalies": 5, "maxAnomalies": 8 },
+      { "region": "africa", "models": 3, "anomalies": 21, "maxAnomalies": 0.5 },
+      { "region": "indo-pacific", "models": 13, "anomalies": 134, "maxAnomalies": 3.5 },
+      { "region": "middle east", "models": 6, "anomalies": 7, "maxAnomalies": 30 },
       { "region": "europe", "models": 12, "anomalies": 19, "maxAnomalies": 1 },
-      { "region": "space", "models": 4, "anomalies": 19, "maxAnomalies": 1 },
+      { "region": "space", "models": 4, "anomalies": 19, "maxAnomalies": 5 },
       { "region": "global", "models": 3, "anomalies": 19, "maxAnomalies": 1 }
     ];
     let mainData = backendData.map(item => {
@@ -59,10 +60,12 @@ export class Map2DComponent implements OnInit {
         return { ...item, coord: [-155, -40], imgcoord: [-140, -20], img: "assets/svg/Satellite.svg" }
       }
     })
+    this.finddata = mainData
    
 
 
     const continents = d3.groups(data, (d: any) => d.continent);
+    console.log(continents)
 
     //projection
     let projection = d3.geoNaturalEarth1()
@@ -90,8 +93,8 @@ export class Map2DComponent implements OnInit {
       // Create a group for each continent
       const continentGroup = svg.append('g')
         .attr('class', `${continent} vk`)
-        .attr("fill", function (d: any) {
-          let color = continent == 'americas' ? '#F6C125' : continent == 'middle east' ? '#F48945' : continent == 'africa' ? '#7FC546' : continent == 'indo-pacific' ? '#CD4545' : continent == 'europe' ? '#710C0C' : 'none';
+        .attr("fill",  (d: any)=> {
+          let color = continent == 'americas' ? this.pickColor('americas') : continent == 'middle east' ? this.pickColor('middle east') : continent == 'africa' ? this.pickColor('africa') : continent == 'indo-pacific' ? this.pickColor('indo-pacific') : continent == 'europe' ? this.pickColor('europe') : 'none';
           return color
         })
         .on('click', (event: any) => {
@@ -132,10 +135,6 @@ export class Map2DComponent implements OnInit {
         .enter().append('path')
         .attr('class', 'continent')
         .attr('d', path)
-        // .attr("fill", function (d: any) {
-        //   let color = d.continent == 'americas' ? '#F6C125' : d.continent == 'middle east' ? '#F48945' : d.continent == 'africa' ? '#7FC546' : d.continent == 'indo-pacific' ? '#CD4545' : d.continent == 'europe' ? '#710C0C' : 'none';
-        //   return color
-        // })
         .attr("stroke-width", function (d: any) {
           let width = (d.continent == 'border' ? 1 : 0);
           return width
@@ -146,11 +145,14 @@ export class Map2DComponent implements OnInit {
 
 
  
-    const countriuesFilteredData = mainData.filter(obj => obj.models !== 0);
+    const countriesFilteredData = mainData.filter(obj => obj.models !== 0);
+    const mappedFilteredData = countriesFilteredData.map((obj)=>{
+      return {...obj,colorline:this.pickColor(obj.region)}
+    });
     const width_rect = 85;
     const height_rect = 50;
 
-    countriuesFilteredData.forEach(countryName => {
+    mappedFilteredData.forEach(countryName => {
       const [lon, lat] = countryName.coord;
       const screenCoords = projection([lon, lat]);
       const x = screenCoords[0];
@@ -200,7 +202,7 @@ export class Map2DComponent implements OnInit {
         .attr("x2", x + 20)  // End point of the line (right)
         .attr("y1", y - (height_rect / 2) + 20)  // Vertical position of the line
         .attr("y2", y - (height_rect / 2) + 20)  // Same as y1 (horizontal line)
-        .attr("stroke", "#F6BE00")  // Yellow color
+        .attr("stroke", countryName.colorline)  // Yellow color
         .attr("stroke-width", 3);  // Thickness of the line
 
 
@@ -258,6 +260,13 @@ export class Map2DComponent implements OnInit {
 
 
 
-
+  pickColor(region:any){
+    const data = this.finddata.find(item => item.region === region);
+    const model = data.models;
+    const maxAnomalies = data.maxAnomalies;
+    let color =model > 0 ? (maxAnomalies >= 1 && maxAnomalies <2 ? '#7FC546' : maxAnomalies >= 2 && maxAnomalies < 4 ? '#F6C125' : maxAnomalies >= 4 && maxAnomalies < 6 ? '#F48945' : maxAnomalies >= 6 && maxAnomalies < 8 ? '#CD4545' :  maxAnomalies >=8 ? '#710C0C' : '#535353') : '#535353'
+   
+    return color
+  }
 
 }
