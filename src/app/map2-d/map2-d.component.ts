@@ -33,7 +33,34 @@ export class Map2DComponent implements OnInit {
     //dimensions
     let width = 1000
     let height = 450;
-    let projection_continents = [{ currentCoord: [22, 1], continent: "africa", targetCoord: [-79, 6] }, { currentCoord: [-81, 9], continent: "americas", targetCoord: [-72, 12] }, { currentCoord: [91, 38], continent: "indo-pacific", targetCoord: [-79, 6] }, { currentCoord: [96, 63], continent: "europe", targetCoord: [-79, 6] }, { currentCoord: [47, 33], continent: "middle east", targetCoord: [-79, 6] }]
+    let backendData = [
+      { "region": "americas", "models": 1, "anomalies": 5, "maxAnomalies": 2 },
+      { "region": "africa", "models": 3, "anomalies": 21, "maxAnomalies": 4 },
+      { "region": "indo-pacific", "models": 13, "anomalies": 134, "maxAnomalies": 6 },
+      { "region": "middle east", "models": 6, "anomalies": 7, "maxAnomalies": 3 },
+      { "region": "europe", "models": 12, "anomalies": 19, "maxAnomalies": 1 },
+      { "region": "space", "models": 0, "anomalies": 19, "maxAnomalies": 1 },
+      { "region": "global", "models": 0, "anomalies": 19, "maxAnomalies": 1 }
+    ];
+    let mainData = backendData.map(item => {
+      if (item.region === 'americas') {
+        return { ...item, coord: [-100, 40], currentCoord: [-81, 9], targetCoord: [-72, 12] }
+      } else if (item.region === 'africa') {
+        return { ...item, coord: [25, 5], currentCoord: [-81, 9], targetCoord: [-72, 12] }
+      } else if (item.region === 'indo-pacific') {
+        return { ...item, coord: [98, 32], currentCoord: [91, 38], targetCoord: [-79, 6] }
+      } else if (item.region === 'middle east') {
+        return { ...item, coord: [45, 27], currentCoord: [47, 33], targetCoord: [-79, 6] }
+      } else if (item.region === 'europe') {
+        return { ...item, coord: [101, 61], currentCoord: [96, 63], targetCoord: [-79, 6] }
+      } else if (item.region === 'global') {
+        return { ...item, coord: [-39, 2], imgcoord: [-40, 20], img: "assets/svg/Globe.svg" }
+      } else if (item.region === 'space') {
+        return { ...item, coord: [-173, -50], imgcoord: [-140, -41], img: "assets/svg/Satellite.svg" }
+      }
+    })
+   
+
 
     const continents = d3.groups(data, (d: any) => d.continent);
 
@@ -64,7 +91,7 @@ export class Map2DComponent implements OnInit {
       const continentGroup = svg.append('g')
         .attr('class', `${continent} vk`)
         .on('click', (event: any) => {
-          const selectedContinent = projection_continents.find(region => region.continent === continent);
+          const selectedContinent:any = mainData.find(region => region.region === continent);
 
           const [targetLongitude, targetLatitude] = selectedContinent.targetCoord;
           const [currentLongitude, currentLatitude] = selectedContinent.currentCoord;
@@ -115,8 +142,7 @@ export class Map2DComponent implements OnInit {
     });
 
 
-    const countries = [{ coord: [101, 61], continent: "Europe", models: 10, anomalies: 70 }, { coord: [-100, 40], continent: "Americas", models: 10, anomalies: 70 }, { coord: [98, 32], continent: "Indo-Pacific", models: 50, anomalies: 70 }, { coord: [45, 27], continent: "Middle East", models: 10, anomalies: 70 }, { coord: [-39, 2], continent: "Global", models: 90, anomalies: 70 }, { coord: [-173, -50], continent: "Space", models: 0, anomalies: 70 }];
-    const countriuesFilteredData = countries.filter(obj => obj.models !== 0);
+    const countriuesFilteredData = mainData.filter(obj => obj.models !== 0);
     const width_rect = 70;
     const height_rect = 45;
 
@@ -142,7 +168,7 @@ export class Map2DComponent implements OnInit {
         .attr("x", x) // Middle of the rectangle
         .attr("y", y - (height_rect / 2) + 10)
         .attr("dy", ".35em") // Adjust the vertical alignment of the text
-        .text(countryName.continent)
+        .text(countryName.region)
 
 
       svg.append("text")
@@ -165,21 +191,13 @@ export class Map2DComponent implements OnInit {
 
     //coordinates for space and global
     //Append them only if models value is greater than 0 for satellite and globe.
-    const spaceGlobal = countries.filter((item: any) => (item.continent === 'Global' || item.continent === 'Space') && item.models !== 0);
-    const spaceGlobalmapped = spaceGlobal.map(item => {
-      if (item.continent === 'Global') {
-        return { ...item, coord: [-40, 20], img: "assets/svg/Globe.svg" }
-      } else if (item.continent === 'Space') {
-        return { ...item, coord: [-140, -41], img: "assets/svg/Satellite.svg" }
-      }
-    })
-
+    const spaceGlobal:any = mainData.filter((item: any) => (item.region === 'global' || item.region === 'space') && item.models !== 0);
     
     const imageWidth = 80;
     const imageHeight = 60;
-    spaceGlobalmapped.forEach(data_all => {
+    spaceGlobal.forEach(data_all => {
 
-      const [lon, lat] = data_all.coord;
+      const [lon, lat] = data_all.imgcoord;
       const screenCoords = projection([lon, lat]);
       const x = screenCoords[0];
       const y = screenCoords[1];
