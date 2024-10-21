@@ -98,20 +98,7 @@ export class Map2DComponent implements OnInit {
           return color
         })
         .on('click', (event: any) => {
-          const selectedContinent:any = mainData.find(region => region.region === continent);
-          const [targetLongitude, targetLatitude] = selectedContinent.targetCoord;
-          const [currentLongitude, currentLatitude] = selectedContinent.currentCoord;
-
-
-          const targetCoords = projection([targetLongitude, targetLatitude]);
-          const currentCoords = projection([currentLongitude, currentLatitude])
-          const dx = (targetCoords[0] - currentCoords[0]) * 1.5;
-          const dy = (targetCoords[1] - currentCoords[1]) * 1.5;
-
-          d3.select('svg').transition().duration(750)
-            .attr('transform', `translate(${dx},${dy}) scale(1.5)`);
-          event.stopPropagation()
-          this.zoom = 1;
+          this.zoomPan(event,continent,projection)
         })
         .on('mouseover', function (d) {
         }).on('mousemove', function (event: any, d: any) {
@@ -153,6 +140,7 @@ export class Map2DComponent implements OnInit {
     const height_rect = 50;
 
     mappedFilteredData.forEach(countryName => {
+      console.log('hgf',countryName)
       const [lon, lat] = countryName.coord;
       const screenCoords = projection([lon, lat]);
       const x = screenCoords[0];
@@ -188,7 +176,8 @@ export class Map2DComponent implements OnInit {
         .attr("height", height_rect)
         .attr("rx", 5)  // Rounded corner radius for x
         .attr("ry", 5)  // Rounded corner radius for y
-        .attr("filter", "url(#drop-shadow)"); 
+        .attr("filter", "url(#drop-shadow)")
+        
 
       svg.append("text")
         .attr("class", "boxTitle")
@@ -196,6 +185,7 @@ export class Map2DComponent implements OnInit {
         .attr("y", y - (height_rect / 2) + 10)
         .attr("dy", ".35em") // Adjust the vertical alignment of the text
         .text(this.capitalizeWords(countryName.region))
+         
 
       svg.append("line")
         .attr("x1", x - 20)  // Start point of the line (left)
@@ -203,7 +193,7 @@ export class Map2DComponent implements OnInit {
         .attr("y1", y - (height_rect / 2) + 20)  // Vertical position of the line
         .attr("y2", y - (height_rect / 2) + 20)  // Same as y1 (horizontal line)
         .attr("stroke", countryName.colorline)  // Yellow color
-        .attr("stroke-width", 3);  // Thickness of the line
+        .attr("stroke-width", 3)  // Thickness of the line
 
 
       svg.append("text")
@@ -220,7 +210,23 @@ export class Map2DComponent implements OnInit {
         .attr("dy", ".35em")
         .text(`Anomalies : ${d3.format(',.0f')(countryName.anomalies)}`)
 
-    });
+        svg.append("rect")
+        .attr("class", "highlight")
+        .attr("x", x - (width_rect / 2))
+        .attr("y", y - (height_rect / 2))
+        .attr("width", width_rect)
+        .attr("height", height_rect)
+        .attr("rx", 5)  // Rounded corner radius for x
+        .attr("ry", 5)  // Rounded corner radius for y
+        .style("fill", "transparent")
+        .style("cursor", "pointer")
+        .on('click',(event:any)=>{
+          this.zoomPan(event,countryName.region,projection)
+
+        }) 
+
+    })
+
 
 
 
@@ -267,6 +273,24 @@ export class Map2DComponent implements OnInit {
     let color =model > 0 ? (maxAnomalies >= 1 && maxAnomalies <2 ? '#7FC546' : maxAnomalies >= 2 && maxAnomalies < 4 ? '#F6C125' : maxAnomalies >= 4 && maxAnomalies < 6 ? '#F48945' : maxAnomalies >= 6 && maxAnomalies < 8 ? '#CD4545' :  maxAnomalies >=8 ? '#710C0C' : '#535353') : '#535353'
    
     return color
+  }
+
+  zoomPan(event:any,continent:any,projection){
+    
+    const selectedContinent:any = this.finddata.find(region => region.region === continent);
+          const [targetLongitude, targetLatitude] = selectedContinent.targetCoord;
+          const [currentLongitude, currentLatitude] = selectedContinent.currentCoord;
+
+
+          const targetCoords = projection([targetLongitude, targetLatitude]);
+          const currentCoords = projection([currentLongitude, currentLatitude])
+          const dx = (targetCoords[0] - currentCoords[0]) * 1.5;
+          const dy = (targetCoords[1] - currentCoords[1]) * 1.5;
+
+          d3.select('svg').transition().duration(750)
+            .attr('transform', `translate(${dx},${dy}) scale(1.5)`);
+          event.stopPropagation()
+          this.zoom = 1;
   }
 
 }
