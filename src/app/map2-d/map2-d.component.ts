@@ -93,8 +93,7 @@ export class Map2DComponent implements OnInit {
       const continentGroup = svg.append('g')
         .attr('class', `${continent} vk`)
         .attr("fill",  (d: any)=> {
-          let color = continent == 'americas' ? this.pickColor('americas') : continent == 'middle east' ? this.pickColor('middle east') : continent == 'africa' ? this.pickColor('africa') : continent == 'indo-pacific' ? this.pickColor('indo-pacific') : continent == 'europe' ? this.pickColor('europe') : 'none';
-          return color
+          return this.pickColor(continent)
         })
         .on('click', (event: any) => {
           this.zoomPan(event,continent,projection)
@@ -274,9 +273,9 @@ export class Map2DComponent implements OnInit {
   pickColor(region:any){
    
       const data = this.finddata.find(item => item.region === region);
-      const model = data.models;
-      const maxAnomalies = data.maxAnomalies;
-      let color =model > 0 ? (maxAnomalies >= 1 && maxAnomalies <2 ? '#7FC546' : maxAnomalies >= 2 && maxAnomalies < 4 ? '#F6C125' : maxAnomalies >= 4 && maxAnomalies < 6 ? '#F48945' : maxAnomalies >= 6 && maxAnomalies < 8 ? '#CD4545' :  maxAnomalies >=8 ? '#710C0C' : '#535353') : '#535353'
+      const model = data?.models;
+      const maxAnomalies = data?.maxAnomalies;
+      let color =model > 0 ? (maxAnomalies >= 1 && maxAnomalies <2 ? '#7FC546' : maxAnomalies >= 2 && maxAnomalies < 4 ? '#F6C125' : maxAnomalies >= 4 && maxAnomalies < 6 ? '#F48945' : maxAnomalies >= 6 && maxAnomalies < 8 ? '#CD4545' :  maxAnomalies >=8 ? '#710C0C' : '#535353') : 'none'
       return color
   
   }
