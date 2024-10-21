@@ -41,7 +41,7 @@ export class Map2DComponent implements OnInit {
       { "region": "middle east", "models": 6, "anomalies": 7, "maxAnomalies": 30 },
       { "region": "europe", "models": 12, "anomalies": 19, "maxAnomalies": 1 },
       { "region": "space", "models": 4, "anomalies": 19, "maxAnomalies": 5 },
-      { "region": "global", "models": 3, "anomalies": 19, "maxAnomalies": 1 }
+      { "region": "global", "models": 3, "anomalies": 19, "maxAnomalies": 0 }
     ];
     let mainData = backendData.map(item => {
       if (item.region === 'americas') {
@@ -55,9 +55,9 @@ export class Map2DComponent implements OnInit {
       } else if (item.region === 'europe') {
         return { ...item, coord: [101, 61], currentCoord: [96, 63], targetCoord: [-79, 6] }
       } else if (item.region === 'global') {
-        return { ...item, coord: [-39, 2], imgcoord: [-40, 20], img: "assets/svg/Globe.svg" }
+        return { ...item, coord: [-39, 2], imgcoord: [-40, 20],currentCoord: [-40,20], targetCoord: [-79,6] }
       } else if (item.region === 'space') {
-        return { ...item, coord: [-155, -40], imgcoord: [-140, -20], img: "assets/svg/Satellite.svg" }
+        return { ...item, coord: [-155, -40], imgcoord: [-140, -20],currentCoord: [-140,-20], targetCoord: [-79,6], img: "assets/svg/Satellite.svg" }
       }
     })
     this.finddata = mainData
@@ -65,7 +65,6 @@ export class Map2DComponent implements OnInit {
 
 
     const continents = d3.groups(data, (d: any) => d.continent);
-    console.log(continents)
 
     //projection
     let projection = d3.geoNaturalEarth1()
@@ -94,8 +93,7 @@ export class Map2DComponent implements OnInit {
       const continentGroup = svg.append('g')
         .attr('class', `${continent} vk`)
         .attr("fill",  (d: any)=> {
-          let color = continent == 'americas' ? this.pickColor('americas') : continent == 'middle east' ? this.pickColor('middle east') : continent == 'africa' ? this.pickColor('africa') : continent == 'indo-pacific' ? this.pickColor('indo-pacific') : continent == 'europe' ? this.pickColor('europe') : 'none';
-          return color
+          return this.pickColor(continent)
         })
         .on('click', (event: any) => {
           this.zoomPan(event,continent,projection)
@@ -140,7 +138,6 @@ export class Map2DComponent implements OnInit {
     const height_rect = 50;
 
     mappedFilteredData.forEach(countryName => {
-      console.log('hgf',countryName)
       const [lon, lat] = countryName.coord;
       const screenCoords = projection([lon, lat]);
       const x = screenCoords[0];
@@ -233,10 +230,14 @@ export class Map2DComponent implements OnInit {
     //coordinates for space and global
     //Append them only if models value is greater than 0 for satellite and globe.
     const spaceGlobal:any = mainData.filter((item: any) => (item.region === 'global' || item.region === 'space') && item.models !== 0);
-    
+    const spaceGlobalMapped:any = spaceGlobal.map((obj)=>{
+          return {...obj,img:this.giveSvg(obj.region,obj.maxAnomalies)}
+      
+    })
+    console.log(spaceGlobalMapped)
     const imageWidth = 80;
     const imageHeight = 60;
-    spaceGlobal.forEach(data_all => {
+    spaceGlobalMapped.forEach(data_all => {
 
       const [lon, lat] = data_all.imgcoord;
       const screenCoords = projection([lon, lat]);
@@ -250,7 +251,7 @@ export class Map2DComponent implements OnInit {
         .attr("x", x - (imageWidth / 2))  // Center the image horizontally
         .attr("y", y - (imageHeight / 2))
         .attr("width", imageWidth)
-        .attr("height", imageHeight);
+        .attr("height", imageHeight)
 
     })
 
@@ -267,12 +268,31 @@ export class Map2DComponent implements OnInit {
 
 
   pickColor(region:any){
-    const data = this.finddata.find(item => item.region === region);
-    const model = data.models;
-    const maxAnomalies = data.maxAnomalies;
-    let color =model > 0 ? (maxAnomalies >= 1 && maxAnomalies <2 ? '#7FC546' : maxAnomalies >= 2 && maxAnomalies < 4 ? '#F6C125' : maxAnomalies >= 4 && maxAnomalies < 6 ? '#F48945' : maxAnomalies >= 6 && maxAnomalies < 8 ? '#CD4545' :  maxAnomalies >=8 ? '#710C0C' : '#535353') : '#535353'
-   
-    return color
+    if(region != 'border'){
+      const data = this.finddata.find(item => item.region === region);
+      const model = data.models;
+      const maxAnomalies = data.maxAnomalies;
+      let color =model > 0 ? (maxAnomalies >= 1 && maxAnomalies <2 ? '#7FC546' : maxAnomalies >= 2 && maxAnomalies < 4 ? '#F6C125' : maxAnomalies >= 4 && maxAnomalies < 6 ? '#F48945' : maxAnomalies >= 6 && maxAnomalies < 8 ? '#CD4545' :  maxAnomalies >=8 ? '#710C0C' : '#535353') : '#535353'
+      return color
+    }
+  }
+
+  giveSvg(region:string,maxAnomalies:number){
+  
+    let link_start = region === 'global' ? ('assets/svg/Globe/globe_') : ('assets/svg/Satellite')
+
+   let link = (maxAnomalies >= 1 && maxAnomalies < 2 
+      ? link_start+`low.svg` 
+      : maxAnomalies >= 2 && maxAnomalies < 4 
+      ? link_start+`moderate.svg` 
+      : maxAnomalies >= 4 && maxAnomalies < 6 
+      ? link_start+`high.svg` 
+      : maxAnomalies >= 6 && maxAnomalies < 8 
+      ? link_start+`critical.svg` 
+      : maxAnomalies >= 8 
+      ? link_start+`severe.svg` 
+      : link_start+`grey.svg`)
+      return link
   }
 
   zoomPan(event:any,continent:any,projection){
