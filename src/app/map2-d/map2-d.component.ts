@@ -36,12 +36,12 @@ export class Map2DComponent implements OnInit {
     let height = 450;
     let backendData = [
       { "region": "americas", "models": 1, "anomalies": 5, "maxAnomalies": 8 },
-      { "region": "africa", "models": 3, "anomalies": 21, "maxAnomalies": 0.5 },
+      { "region": "africa", "models": 3, "anomalies": 21, "maxAnomalies": 4 },
       { "region": "indo-pacific", "models": 13, "anomalies": 134, "maxAnomalies": 3.5 },
       { "region": "middle east", "models": 6, "anomalies": 7, "maxAnomalies": 30 },
       { "region": "europe", "models": 12, "anomalies": 19, "maxAnomalies": 1 },
       { "region": "space", "models": 4, "anomalies": 19, "maxAnomalies": 5 },
-      { "region": "global", "models": 3, "anomalies": 19, "maxAnomalies": 0 }
+      { "region": "global", "models": 3, "anomalies": 19, "maxAnomalies": 10 }
     ];
     let mainData = backendData.map(item => {
       if (item.region === 'americas') {
@@ -253,6 +253,9 @@ export class Map2DComponent implements OnInit {
         .attr("y", y - (imageHeight / 2))
         .attr("width", imageWidth)
         .attr("height", imageHeight)
+        .on('click',(event:any)=>{
+          this.zoomPan(event,data_all.region,projection)
+        }) 
 
     })
 
