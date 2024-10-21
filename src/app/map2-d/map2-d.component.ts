@@ -252,6 +252,7 @@ export class Map2DComponent implements OnInit {
         .attr("y", y - (imageHeight / 2))
         .attr("width", imageWidth)
         .attr("height", imageHeight)
+        .style("cursor", "pointer")
         .on('click',(event:any)=>{
           this.zoomPan(event,data_all.region,projection)
         }) 
