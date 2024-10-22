@@ -40,8 +40,8 @@ export class Map2DComponent implements OnInit {
       { "region": "indo-pacific", "models": 13, "anomalies": 134, "maxAnomalies": 3.5 },
       { "region": "middle east", "models": 6, "anomalies": 7, "maxAnomalies": 30 },
       { "region": "europe", "models": 12, "anomalies": 19, "maxAnomalies": 1 },
-      { "region": "space", "models": 4, "anomalies": 19, "maxAnomalies": 5 },
-      { "region": "global", "models": 3, "anomalies": 19, "maxAnomalies": 10 }
+      { "region": "space", "models": 14, "anomalies": 19, "maxAnomalies":16 },
+      { "region": "global", "models": 3, "anomalies": 19, "maxAnomalies": 3 }
     ];
     let mainData = backendData.map(item => {
       if (item.region === 'americas') {
@@ -57,7 +57,7 @@ export class Map2DComponent implements OnInit {
       } else if (item.region === 'global') {
         return { ...item, coord: [-39, 2], imgcoord: [-40, 20],currentCoord: [-40,20], targetCoord: [-79,6] }
       } else if (item.region === 'space') {
-        return { ...item, coord: [-155, -40], imgcoord: [-140, -20],currentCoord: [-140,-20], targetCoord: [-79,6], img: "assets/svg/Satellite.svg" }
+        return { ...item, coord: [-155, -40], imgcoord: [-140, -20],currentCoord: [-140,-20], targetCoord: [-79,6] }
       }
     })
     this.finddata = mainData
@@ -283,7 +283,7 @@ export class Map2DComponent implements OnInit {
 
   giveSvg(region:string,maxAnomalies:number){
   
-    let link_start = region === 'global' ? ('assets/svg/Globe/globe_') : ('assets/svg/Satellite')
+    let link_start = region === 'global' ? ('assets/svg/Globe/globe_') : ('assets/svg/Satellite/satellite_')
 
    let link = (maxAnomalies >= 1 && maxAnomalies < 2 
       ? link_start+`low.svg` 
