@@ -40,8 +40,8 @@ export class Map2DComponent implements OnInit {
       { "region": "indo-pacific", "models": 13, "anomalies": 134, "maxAnomalies": 3.5 },
       { "region": "middle east", "models": 6, "anomalies": 7, "maxAnomalies": 30 },
       { "region": "europe", "models": 12, "anomalies": 19, "maxAnomalies": 1 },
-      { "region": "space", "models": 14, "anomalies": 19, "maxAnomalies":16 },
-      { "region": "global", "models": 3, "anomalies": 19, "maxAnomalies": 3 }
+      { "region": "space", "models": 14, "anomalies": 19, "maxAnomalies":0 },
+      { "region": "global", "models": 10, "anomalies": 19, "maxAnomalies": 0 }
     ];
     let mainData = backendData.map(item => {
       if (item.region === 'americas') {
