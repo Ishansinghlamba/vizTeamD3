@@ -38,8 +38,8 @@ export class Map2DComponent implements OnInit {
       { "region": "americas", "models": 1, "anomalies": 5, "maxAnomalies": 8 },
       { "region": "africa", "models": 3, "anomalies": 21, "maxAnomalies": 4 },
       { "region": "indo-pacific", "models": 13, "anomalies": 134, "maxAnomalies": 3.5 },
-      { "region": "middle east", "models": 6, "anomalies": 7, "maxAnomalies": 30 },
-      { "region": "europe", "models": 12, "anomalies": 19, "maxAnomalies": 1 },
+      { "region": "middle east", "models": 10, "anomalies": 7, "maxAnomalies": 30 },
+      { "region": "europe", "models": 0, "anomalies": 19, "maxAnomalies": 1 },
       { "region": "space", "models": 14, "anomalies": 19, "maxAnomalies":0 },
       { "region": "global", "models": 10, "anomalies": 19, "maxAnomalies": 0 }
     ];
@@ -61,7 +61,7 @@ export class Map2DComponent implements OnInit {
       }
     })
     this.finddata = mainData
-   
+  
 
 
     const continents = d3.groups(data, (d: any) => d.continent);
@@ -84,6 +84,8 @@ export class Map2DComponent implements OnInit {
       .attr("width", '100%')
       .attr("height", '20%')
       .attr('viewBox', `0 0 ${width} ${height}`)
+
+      console.log('kj',svg)
 
 
     let path = d3.geoPath().projection(projection)
@@ -276,7 +278,7 @@ export class Map2DComponent implements OnInit {
       const data = this.finddata.find(item => item.region === region);
       const model = data?.models;
       const maxAnomalies = data?.maxAnomalies;
-      let color =model > 0 ? (maxAnomalies >= 1 && maxAnomalies <2 ? '#7FC546' : maxAnomalies >= 2 && maxAnomalies < 4 ? '#F6C125' : maxAnomalies >= 4 && maxAnomalies < 6 ? '#F48945' : maxAnomalies >= 6 && maxAnomalies < 8 ? '#CD4545' :  maxAnomalies >=8 ? '#710C0C' : '#535353') : 'none'
+      let color =model > 0 ? (maxAnomalies >= 1 && maxAnomalies <2 ? '#7FC546' : maxAnomalies >= 2 && maxAnomalies < 4 ? '#F6C125' : maxAnomalies >= 4 && maxAnomalies < 6 ? '#F48945' : maxAnomalies >= 6 && maxAnomalies < 8 ? '#CD4545' :  maxAnomalies >=8 ? '#710C0C' : '#535353') : model ==0 ? '#535353':'none'
       return color
   
   }
